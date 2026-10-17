@@ -13,3 +13,8 @@ Home Assistant identifies apps by repository ID and slug; the repository-hosted 
 9. Enable automatic updates for the new repo app in the Home Assistant UI **after one manual update and backup-restore test**.
 
 **Why no single copy command?** HAOS host filesystem paths depend on the Supervisor version and terminal app mount access. A blind `cp` can silently copy the wrong data or overwrite the live database. Verify actual paths before selecting a command.
+
+
+## After migration
+
+After installation, use each app's **Documentation** tab in Home Assistant for configuration help and wrapper-specific notes.

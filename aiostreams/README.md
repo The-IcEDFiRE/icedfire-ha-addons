@@ -1,17 +1,25 @@
-<div align="center">
-
-<img src="icon.png" alt="aiostreams community icon" width="108">
-
-</div>
-
 # AIOStreams
 
-Upstream image: `ghcr.io/viren070/aiostreams:latest`.
+AIOStreams packaged as a managed Home Assistant app.
 
-Host port: `3000`. Persisted upstream directory: `/app/data` (mapped from Home Assistant's private app data).
+## What this wrapper provides
 
-Home Assistant app options are read from `/app/data/options.json`. This is a **private managed data mount**.
+- Native install from Home Assistant
+- Persistent app data stored in Home Assistant managed storage
+- Home Assistant backups (`backup: cold`)
+- UI-based configuration for the most important bootstrap options
+- Advanced passthrough with `environment_overrides_json`
 
-`environment_overrides_json` accepts a JSON object containing additional upstream environment variables. Environment values remain in app options/backups; do not put secrets in Git. Blank optional values are not exported. See the upstream documentation for valid variable names.
+## Default access
 
-**Important:** This is an independently built wrapper, not an official upstream Home Assistant app. Validate startup and a restore before unattended updates.
+- **Port:** `3000`
+- **Web UI:** `http://HOME_ASSISTANT_IP:3000/stremio/configure`
+
+Open the **Documentation** tab for setup and configuration guidance.
+
+## Upstream
+
+- Image: `ghcr.io/viren070/aiostreams:latest`
+- Documentation: <https://docs.aiostreams.viren070.me/>
+
+This repository is a community wrapper, not the official upstream Home Assistant package.
