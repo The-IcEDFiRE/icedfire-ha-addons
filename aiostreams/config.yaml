@@ -1,0 +1,32 @@
+name: AIOStreams
+version: "1.0.0"
+slug: aiostreams
+description: AIOStreams native Home Assistant app with managed persistent storage
+url: https://github.com/Viren070/AIOStreams
+arch:
+  - amd64
+  - aarch64
+image: ghcr.io/the-icedfire/ha-aiostreams
+startup: services
+boot: auto
+init: false
+backup: cold
+ports:
+  3000/tcp: 3000
+ports_description:
+  3000/tcp: AIOStreams HTTP port
+webui: http://[HOST]:[PORT:3000]/stremio/configure
+map:
+  - type: data
+    read_only: false
+    path: /app/data
+options:
+  base_url: "http://10.0.0.16:3000"
+  secret_key: ""
+  operator_auth: ""
+  log_level: "info"
+schema:
+  base_url: url
+  secret_key: password
+  operator_auth: "password?"
+  log_level: list(trace|debug|info|warn|error|fatal)
