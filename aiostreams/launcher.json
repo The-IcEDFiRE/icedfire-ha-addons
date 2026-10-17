@@ -1,0 +1,14 @@
+{
+  "target": "/app/packages/server/dist/server.js",
+  "env": {
+    "base_url": "BASE_URL",
+    "secret_key": "SECRET_KEY",
+    "aiostreams_auth": "AIOSTREAMS_AUTH",
+    "aiostreams_auth_permissions": "AIOSTREAMS_AUTH_PERMISSIONS"
+  },
+  "required": [
+    "secret_key"
+  ],
+  "mode": "node",
+  "data_path": "/app/data"
+}

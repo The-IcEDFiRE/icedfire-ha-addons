@@ -1,0 +1,37 @@
+name: AIOMetadata
+version: 0.0.0
+slug: aiometadata
+description: AIOMetadata as a managed Home Assistant app
+url: https://github.com/The-IcEDFiRE/icedfire-ha-addons/tree/main/aiometadata
+arch:
+- amd64
+- aarch64
+startup: services
+boot: auto
+init: false
+backup: cold
+timeout: 60
+image: ghcr.io/the-icedfire/ha-aiometadata
+ports:
+  3232/tcp: 3232
+webui: http://[HOST]:[PORT:3232]/configure
+map:
+- type: data
+  read_only: false
+  path: /app/addon/data
+options:
+  host_name: ''
+  tmdb_api_key: ''
+  tvdb_api_key: ''
+  fanart_api_key: ''
+  redis_url: ''
+  database_uri: sqlite://addon/data/db.sqlite
+  environment_overrides_json: '{}'
+schema:
+  host_name: str?
+  tmdb_api_key: password?
+  tvdb_api_key: password?
+  fanart_api_key: password?
+  redis_url: str?
+  database_uri: str
+  environment_overrides_json: str

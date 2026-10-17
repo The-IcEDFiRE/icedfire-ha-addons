@@ -1,81 +1,26 @@
 import { readFileSync } from 'node:fs';
-
-// HA app data is mounted at /app/data so AIOStreams SQLite persists there.
-const optionsPath = '/app/data/options.json';
-let options;
-try {
-  options = JSON.parse(readFileSync(optionsPath, 'utf8'));
-} catch (error) {
-  console.error(`Cannot read app settings at ${optionsPath}: ${error.message}`);
-  process.exit(1);
+import { spawn } from 'node:child_process';
+const launcher = JSON.parse(readFileSync(new URL('./launcher.json', import.meta.url), 'utf8'));
+const options = JSON.parse(readFileSync(`${launcher.data_path}/options.json`, 'utf8'));
+for (const field of launcher.required) {
+  if (!options[field]) throw new Error(`Missing required Home Assistant option: ${field}`);
 }
-
-if (!options.base_url || typeof options.base_url !== 'string') {
-  console.error('Missing base_url in Home Assistant app configuration.');
-  process.exit(1);
+for (const [field, variable] of Object.entries(launcher.env)) {
+  const value = options[field];
+  if (value !== undefined && value !== null && value !== '') process.env[variable] = String(value);
 }
-if (!/^[a-f\d]{64}$/i.test(options.secret_key ?? '')) {
-  console.error('secret_key must be a 64-character hexadecimal string.');
-  process.exit(1);
+let extras;
+try { extras = JSON.parse(options.environment_overrides_json || '{}'); }
+catch (error) { throw new Error(`Invalid environment_overrides_json: ${error.message}`); }
+if (!extras || Array.isArray(extras) || typeof extras !== 'object') throw new Error('environment_overrides_json must contain a JSON object');
+for (const [key, value] of Object.entries(extras)) {
+  if (!/^[A-Z_][A-Z0-9_]*$/.test(key)) throw new Error(`Invalid environment variable name: ${key}`);
+  if (['PATH', 'NODE_OPTIONS', 'LD_PRELOAD', 'DATA_DIR', 'PORT'].includes(key)) throw new Error(`Protected environment variable: ${key}`);
+  if (value !== null && value !== '') process.env[key] = typeof value === 'string' ? value : JSON.stringify(value);
 }
-
-// Separate optional HA fields for bootstrapping, never put secrets in Git.
-const mappings = {
-  operator_auth: 'AIOSTREAMS_AUTH',
-  operator_auth_permissions: 'AIOSTREAMS_AUTH_PERMISSIONS',
-  database_uri: 'DATABASE_URI',
-  database_pool_size: 'DATABASE_POOL_SIZE',
-  redis_uri: 'REDIS_URI',
-  redis_timeout: 'REDIS_TIMEOUT',
-  settings_refresh_interval: 'SETTINGS_REFRESH_INTERVAL',
-  internal_url: 'INTERNAL_URL',
-  disk_cache_dir: 'DISK_CACHE_DIR',
-  log_buffer_max_bytes: 'LOG_BUFFER_MAX_BYTES',
-  log_buffer_max_entries: 'LOG_BUFFER_MAX_ENTRIES',
-  node_env: 'NODE_ENV',
-  system_lifecycle_enabled: 'SYSTEM_LIFECYCLE_ENABLED',
-};
-
-for (const [key, name] of Object.entries(mappings)) {
-  const value = options[key];
-  if (value !== undefined && value !== null && value !== '') {
-    process.env[name] = String(value);
-  }
-}
-
-let overrides;
-try {
-  overrides = JSON.parse(options.environment_overrides_json || '{}');
-  if (!overrides || Array.isArray(overrides) || typeof overrides !== 'object') {
-    throw new Error('Expected a JSON object');
-  }
-} catch (error) {
-  console.error(`Invalid environment_overrides_json: ${error.message}`);
-  process.exit(1);
-}
-
-const reserved = new Set(['BASE_URL', 'SECRET_KEY', 'PORT']);
-for (const [name, value] of Object.entries(overrides)) {
-  if (!/^[A-Z][A-Z0-9_]*$/.test(name)) {
-    console.error(`Invalid environment override name: ${name}`);
-    process.exit(1);
-  }
-  if (reserved.has(name)) {
-    console.error(`${name} must not be overridden via environment_overrides_json.`);
-    process.exit(1);
-  }
-  if (value === null || value === '') continue;
-  // Arrays/maps must use the exact string representation expected by AIOStreams.
-  if (!['string', 'number', 'boolean'].includes(typeof value)) {
-    console.error(`Override ${name} must be a string, number, boolean or null.`);
-    process.exit(1);
-  }
-  process.env[name] = String(value);
-}
-
-// These two options cannot be overridden by the generic settings field.
-process.env.BASE_URL = options.base_url;
-process.env.SECRET_KEY = options.secret_key;
-
-// Upstream image is Node-based and does not include a shell.
-await import('/app/packages/server/dist/server.js');
+const args = launcher.mode === 'shell' ? [] : [launcher.target];
+const command = launcher.mode === 'shell' ? launcher.target : process.execPath;
+const child = spawn(command, args, { env: process.env, stdio: 'inherit' });
+for (const signal of ['SIGTERM','SIGINT']) process.on(signal, () => child.kill(signal));
+child.on('error', e => { console.error(e); process.exitCode = 1; });
+child.on('exit', (code, signal) => { process.exit(signal ? 128 + (signal === 'SIGTERM' ? 15 : 2) : code ?? 1); });

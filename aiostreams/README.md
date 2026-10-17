@@ -1,7 +1,11 @@
-# AIOStreams Home Assistant app
+# AIOStreams
 
-Enter your `base_url` and **existing** `secret_key` (64 hexadecimal characters) in the Configuration tab. Additional bootstrap fields are optional. To set *any* other official AIOStreams environment variable, add it to `environment_overrides_json` as JSON, e.g. `{"LOG_LEVEL":"debug","AIOSTREAMS_AUTH_REQUIRED":true}`. Use strings for comma-separated lists or JSON-array settings when required by upstream.
+Upstream image: `ghcr.io/viren070/aiostreams:latest`.
 
-Only set runtime variables if you want to **lock** them: upstream marks environment-overridden runtime settings read-only in the AIOStreams dashboard. Leave unneeded fields empty.
+Host port: `3000`. Persisted upstream directory: `/app/data` (mapped from Home Assistant's private app data).
 
-`PORT` is fixed to 3000 inside the image; use the HA port mapping to change the host-side port. Keep the `SECRET_KEY` stable through migrations. Generic override JSON is not secret-masked. See the root README for details and migration instructions.
+Home Assistant app options are read from `/app/data/options.json`. This is a **private managed data mount**.
+
+`environment_overrides_json` accepts a JSON object containing additional upstream environment variables. Environment values remain in app options/backups; do not put secrets in Git. Blank optional values are not exported. See the upstream documentation for valid variable names.
+
+**Important:** This is an independently built wrapper, not an official upstream Home Assistant app. Validate startup and a restore before unattended updates.

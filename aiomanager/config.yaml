@@ -1,0 +1,33 @@
+name: AIOManager
+version: 0.0.0
+slug: aiomanager
+description: AIOManager as a managed Home Assistant app
+url: https://github.com/The-IcEDFiRE/icedfire-ha-addons/tree/main/aiomanager
+arch:
+- amd64
+- aarch64
+startup: services
+boot: auto
+init: false
+backup: cold
+timeout: 60
+image: ghcr.io/the-icedfire/ha-aiomanager
+ports:
+  1610/tcp: 1610
+webui: http://[HOST]:[PORT:1610]/
+map:
+- type: data
+  read_only: false
+  path: /app/data
+options:
+  encryption_key: ''
+  db_type: sqlite
+  database_url: ''
+  cors_origins: ''
+  environment_overrides_json: '{}'
+schema:
+  encryption_key: password?
+  db_type: list(sqlite|postgres)
+  database_url: password?
+  cors_origins: str?
+  environment_overrides_json: str

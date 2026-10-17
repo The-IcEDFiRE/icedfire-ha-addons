@@ -1,0 +1,14 @@
+{
+  "target": "/usr/local/bin/entrypoint.sh",
+  "env": {
+    "host_name": "HOST_NAME",
+    "tmdb_api_key": "TMDB_API_KEY",
+    "tvdb_api_key": "TVDB_API_KEY",
+    "fanart_api_key": "FANART_API_KEY",
+    "redis_url": "REDIS_URL",
+    "database_uri": "DATABASE_URI"
+  },
+  "required": [],
+  "mode": "shell",
+  "data_path": "/app/addon/data"
+}

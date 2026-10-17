@@ -1,0 +1,69 @@
+name: Check upstream images and publish apps
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'aiostreams/**'
+      - 'aiometadata/**'
+      - 'aiomanager/**'
+      - 'scripts/**'
+      - '.github/workflows/publish.yml'
+permissions:
+  contents: write
+  packages: write
+concurrency:
+  group: publish-apps
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install YAML support
+        run: python3 -m pip install --user PyYAML
+      - name: Check, build and publish each changed image
+        shell: bash
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+        run: |
+          set -euo pipefail
+          for app in aiostreams aiometadata aiomanager; do
+            upstream=$(python3 scripts/app_meta.py "$app" upstream)
+            upstream_digest=$(docker buildx imagetools inspect "$upstream" --format '{{.Manifest.Digest}}')
+            previous=$(cat "$app/upstream-digest.txt")
+            current_version=$(python3 scripts/app_meta.py "$app" version)
+            # When a wrapper source changes and a user dispatches the workflow, republish it.
+            # On schedule, publish only if upstream digest differs.
+            if [[ "$upstream_digest" == "$previous" && "${{ github.event_name }}" == 'schedule' ]]; then
+              echo "$app unchanged"
+              continue
+            fi
+            version="$(date -u +%Y.%m.%d).${RUN_NUMBER}"
+            image="ghcr.io/the-icedfire/ha-${app}"
+            docker buildx build --pull \
+              --platform linux/amd64,linux/arm64 \
+              --build-arg UPSTREAM_IMAGE="$upstream" \
+              --build-arg BUILD_VERSION="$version" \
+              --tag "$image:$version" --push "$app"
+            python3 scripts/app_meta.py "$app" set-version "$version"
+            printf '%s\n' "$upstream_digest" > "$app/upstream-digest.txt"
+          done
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add aiostreams/config.yaml aiometadata/config.yaml aiomanager/config.yaml */upstream-digest.txt
+            git commit -m "chore: publish updated Home Assistant apps"
+            git push
+          fi

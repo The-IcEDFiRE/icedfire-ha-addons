@@ -1,29 +1,15 @@
 # Safe migration from `local_aiostreams`
 
-**Do not uninstall the existing local app until you have verified the replacement.** Installing the GitHub repository creates a second app with a different Supervisor slug and **separate** managed data storage.
+Home Assistant identifies apps by repository ID and slug; the repository-hosted AIOStreams app **is a different app** from `local_aiostreams` with separate data. Do **not** uninstall the local instance to migrate.
 
-## Before starting
+1. Confirm the current local app's data mount and make a *full Home Assistant backup* that includes it. Confirm the backup completes and can be retrieved.
+2. Record existing `BASE_URL`, `AIOSTREAMS_AUTH`, other options, and most importantly the existing `SECRET_KEY` in a secure place. Never paste keys into GitHub.
+3. Stop the old local AIOStreams app. Avoid concurrent writes to the SQLite database.
+4. Identify its **actual managed data directory**. For the existing wrapper using `map: {type: data, path: /app/data}`, database files such as `db.sqlite` reside under `/app/data` *inside that container*. Don't guess the HAOS host path.
+5. Install the new repository app, configure the **same SECRET_KEY** and identical credentials, but don't start it yet. The old and new apps both expose host port 3000.
+6. Transfer the entire old persistent data directory (including database sidecars, if any) to the new app's private data directory using a trusted backup/restore approach or a supervised temporary copy. **Do not copy the old `/options.json` over the new instance's options file.** Create a fresh backup before replacing target files.
+7. Start the repository app and verify the account list, providers, profiles, and data survive a restart. Take another full backup.
+8. Only after verification, disable the old app's autostart; leave it uninstalled until you are certain.
+9. Enable automatic updates for the new repo app in the Home Assistant UI **after one manual update and backup-restore test**.
 
-1. Make a full Home Assistant backup including `local_aiostreams`, its app configuration, and app data. Download an offline copy; check that it contains what you expect.
-2. Record the **existing** `SECRET_KEY` (copy securely, do not paste into GitHub) and `BASE_URL` and `AIOSTREAMS_AUTH` if used.
-3. Check the existing app database is in persistent storage: the application logs should show `./data/db.sqlite`, and the local app mapping should have `type: data`, `path: /app/data`. This is not sufficient proof by itself—confirm persistence with a restart and locate the actual managed volume before copying.
-4. Install the new GitHub-backed app **but do not start it**. Keep its port from conflicting with the current app until migration.
-5. Make sure both apps use compatible AIOStreams releases (prefer the same upstream release on first boot to avoid an irreversible database migration). Once the new image runs a newer version, rolling back may not be safe.
-
-## Safely copy your database and files
-
-1. Stop the OLD app and the NEW app before copying. SQLite must be quiescent.
-2. From HAOS host-level access (not an ordinary SSH app shell), identify the actual managed data mount paths for *each* app rather than assuming `/addons` or `/local_apps` is the host data path. `docker inspect` of each app container's `Mounts` is one way to establish source and target paths. Some SSH apps isolate the filesystem, so paths differ.
-3. Copy the entire contents of the old app's *managed data* directory (not just `db.sqlite`) into the new app's managed data directory, preserving ownership and permissions. Exclude/replace the new app's `options.json`: each HA app has its own configuration, and its options must remain those set via its own UI.
-4. Confirm `db.sqlite` is found at the new app's `/app/data/db.sqlite`. If present, include any SQLite `-wal`/`-shm` companion files from the stopped instance and other data files. Do not copy an actively written SQLite database.
-5. Set the new app's `secret_key` field to the original key, and configure `base_url` and any operator credentials.
-6. Start only the NEW app. Review logs for database migrations, authentication, and server startup; verify several existing user configurations, credentials, and files.
-7. Once verified, enable Start on boot and Automatic updates on the NEW app and take a fresh backup. Keep the OLD app stopped for a recovery period; uninstall only after confirming backup/restore readiness.
-
-## Important
-
-- A full restore of an old app backup usually restores the **old app slug**, not the different GitHub repository slug. It is not a reliable cross-slug migration by itself.
-- Do not overwrite new `/app/data/options.json` with the old file.
-- The Home Assistant SSH terminal may not expose Supervisor host directories. Obtain host-level access or use a controlled method to move data after checking actual mount paths. Avoid guessing filesystem paths or using privileged operations on an unverified mount.
-- If exact host mount paths or container names aren't known, ask for output of `docker ps --format '{{.Names}}'` and `docker inspect <container> --format '{{json .Mounts}}'` from the HAOS host rather than using speculative copy commands.
-- AIOStreams also supports user-configuration export/import if full server state is unnecessary, but it does not replace a full SQLite/data migration.
+**Why no single copy command?** HAOS host filesystem paths depend on the Supervisor version and terminal app mount access. A blind `cp` can silently copy the wrong data or overwrite the live database. Verify actual paths before selecting a command.

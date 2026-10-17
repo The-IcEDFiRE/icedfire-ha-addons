@@ -1,0 +1,12 @@
+{
+  "target": "/app/server/index.js",
+  "env": {
+    "encryption_key": "ENCRYPTION_KEY",
+    "db_type": "DB_TYPE",
+    "database_url": "DATABASE_URL",
+    "cors_origins": "CORS_ORIGINS"
+  },
+  "required": [],
+  "mode": "node",
+  "data_path": "/app/data"
+}
