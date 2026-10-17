@@ -1,5 +1,5 @@
 name: AIOManager
-version: 0.0.0
+version: "2026.10.17.1"
 slug: aiomanager
 description: AIOManager as a managed Home Assistant app
 url: https://github.com/The-IcEDFiRE/icedfire-ha-addons/tree/main/aiomanager
