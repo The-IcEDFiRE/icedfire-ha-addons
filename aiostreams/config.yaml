@@ -24,9 +24,36 @@ options:
   base_url: "http://10.0.0.16:3000"
   secret_key: ""
   operator_auth: ""
-  log_level: "info"
+  operator_auth_permissions: ""
+  database_uri: ""
+  database_pool_size: ""
+  redis_uri: ""
+  redis_timeout: ""
+  settings_refresh_interval: ""
+  internal_url: ""
+  disk_cache_dir: ""
+  log_buffer_max_bytes: ""
+  log_buffer_max_entries: ""
+  node_env: ""
+  system_lifecycle_enabled: ""
+  # Any other official AIOStreams environment variable can be placed here.
+  # Format: JSON object of uppercase variable names to string/number/boolean values.
+  # Example: {"LOG_LEVEL":"debug","TMDB_API_KEY":"xxx"}
+  environment_overrides_json: "{}"
 schema:
   base_url: url
   secret_key: password
   operator_auth: "password?"
-  log_level: list(trace|debug|info|warn|error|fatal)
+  operator_auth_permissions: "str?"
+  database_uri: "str?"
+  database_pool_size: "str?"
+  redis_uri: "str?"
+  redis_timeout: "str?"
+  settings_refresh_interval: "str?"
+  internal_url: "str?"
+  disk_cache_dir: "str?"
+  log_buffer_max_bytes: "str?"
+  log_buffer_max_entries: "str?"
+  node_env: "str?"
+  system_lifecycle_enabled: "str?"
+  environment_overrides_json: "str?"

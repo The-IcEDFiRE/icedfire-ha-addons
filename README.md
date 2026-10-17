@@ -23,7 +23,21 @@
 
 ## Configuration
 
-Set `base_url`, the original `secret_key` (64 hex characters), and optional `operator_auth` in the Home Assistant Configuration tab. `operator_auth` is passed to `AIOSTREAMS_AUTH` and must use comma-separated `username:password` entries. Never commit credentials into this Git repository.
+Set `base_url`, the original `secret_key` (64 hex characters), and optional bootstrap variables in the Home Assistant Configuration tab. `operator_auth` is passed to `AIOSTREAMS_AUTH` and must use comma-separated `username:password` entries. Never commit credentials into this Git repository.
+
+### All AIOStreams environment variables
+
+Every current **and future** AIOStreams environment variable can be configured using the optional `environment_overrides_json` field (a JSON object) in Home Assistant's Configuration tab. For example:
+
+```json
+{"LOG_LEVEL":"debug","TMDB_API_KEY":"your-key","AIOSTREAMS_AUTH_REQUIRED":true,"DISABLE_RATE_LIMITS":false}
+```
+
+Names must be uppercase and values must be strings, numbers, booleans or null. For lists/maps, use the string representation specified in [the official variable documentation](https://docs.aiostreams.viren070.me/configuration/environment-variables/), e.g. `"TRUSTED_IPS":"loopback,linklocal,uniquelocal"`. Blank strings and null values are not exported. `BASE_URL`, `SECRET_KEY` and `PORT` are reserved and cannot be changed via this field. `PORT` stays at the app's internal port 3000; change only the mapped host port in the Home Assistant port configuration if needed.
+
+**Important:** Upstream distinguishes bootstrap options (environment-only) from runtime settings (normally editable in AIOStreams dashboard). Passing a runtime value as an environment variable **locks** that setting read-only in the dashboard. The generic field makes *all* variables available but avoids showing hundreds of permanently populated default fields. Do not add a variable unless you want to override it. `SECRET_KEY` and other passwords stored in Home Assistant options are masked where individual `password` fields exist, but the generic JSON field is **not masked**; avoid putting sensitive credentials there if visibility in the HA UI is a concern. These values are stored as app settings and included in backups.
+
+**Note:** This is full variable coverage through an advanced JSON editor, not separate visual fields for every variable. A few bootstrap variables have dedicated fields. Unknown or mistyped names cannot be validated against an evolving upstream specification and may simply be ignored by AIOStreams. Changing app configuration generally requires restarting the app.
 
 The image builds from an upstream digest rather than a floating tag during CI, so a single run cannot accidentally use two different upstream images on amd64 and aarch64. The workflow tracks **the multi-platform manifest digest**, not the upstream application release version. GitHub scheduled workflows can be delayed, and Supervisor's update polling adds delay; updates are not instantaneous.
 
