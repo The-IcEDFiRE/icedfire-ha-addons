@@ -1,5 +1,5 @@
 name: AIOStreams
-version: "1.0.1"
+version: "1.0.2"
 slug: aiostreams
 description: AIOStreams native Home Assistant app with managed persistent storage
 url: https://github.com/Viren070/AIOStreams
