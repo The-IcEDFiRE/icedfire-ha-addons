@@ -1,3 +1,9 @@
+<div align="center">
+
+<img src="icon.png" alt="aiomanager community icon" width="108">
+
+</div>
+
 # AIOManager
 
 Upstream image: `ghcr.io/sonicx161/aiomanager:latest`.

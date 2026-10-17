@@ -1,3 +1,9 @@
+<div align="center">
+
+<img src="icon.png" alt="aiostreams community icon" width="108">
+
+</div>
+
 # AIOStreams
 
 Upstream image: `ghcr.io/viren070/aiostreams:latest`.

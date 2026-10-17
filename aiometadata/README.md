@@ -1,3 +1,9 @@
+<div align="center">
+
+<img src="icon.png" alt="aiometadata community icon" width="108">
+
+</div>
+
 # AIOMetadata
 
 Upstream image: `ghcr.io/cedya77/aiometadata:latest`.
