@@ -1,4 +1,4 @@
-# IcEDFiRE Redis
+# Redis
 
 Private Redis cache for AIO apps. See [`DOCS.md`](DOCS.md) for setup, security and connection URLs.
 

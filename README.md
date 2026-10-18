@@ -7,8 +7,8 @@ This repository currently provides five independently installable apps:
 - **AIOStreams** — streaming add-on wrapper for Home Assistant
 - **AIOMetadata** — metadata add-on wrapper for Home Assistant
 - **AIOManager** — management add-on wrapper for Home Assistant
-- **IcEDFiRE Redis** — optional private Redis service
-- **IcEDFiRE PostgreSQL** — optional private PostgreSQL 17 database
+- **Redis** — optional private Redis service
+- **PostgreSQL** — optional private PostgreSQL 17 database
 
 These are **community wrappers** around upstream containers. They are not official Home Assistant packages from the upstream project authors.
 
@@ -39,8 +39,8 @@ These are **community wrappers** around upstream containers. They are not offici
 | AIOStreams | `3000` | `ghcr.io/viren070/aiostreams:latest` |
 | AIOMetadata | `3232` | `ghcr.io/cedya77/aiometadata:latest` |
 | AIOManager | `1610` | `ghcr.io/sonicx161/aiomanager:latest` |
-| IcEDFiRE Redis | Internal `6379` (not exposed by default) | `redis:7.4-bookworm` |
-| IcEDFiRE PostgreSQL | Internal `5432` (not exposed by default) | `postgres:17-bookworm` |
+| Redis | Internal `6379` (not exposed by default) | `redis:7.4-bookworm` |
+| PostgreSQL | Internal `5432` (not exposed by default) | `postgres:17-bookworm` |
 
 ## Automatic updates
 

@@ -1,4 +1,4 @@
-# IcEDFiRE Redis — Configuration and Connections
+# Redis — Configuration and Connections
 
 This optional service supplies Redis caching to apps that support a Redis URL. It is not required for every AIO app.
 

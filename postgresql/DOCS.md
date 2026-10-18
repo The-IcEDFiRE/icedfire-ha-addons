@@ -1,4 +1,4 @@
-# IcEDFiRE PostgreSQL — Configuration and Connections
+# PostgreSQL — Configuration and Connections
 
 This optional service provides PostgreSQL to AIO applications that explicitly support PostgreSQL databases. It is **not** a drop-in replacement for every SQLite setting.
 

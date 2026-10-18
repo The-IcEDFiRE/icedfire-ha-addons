@@ -1,4 +1,4 @@
-# IcEDFiRE PostgreSQL
+# PostgreSQL
 
 Private PostgreSQL database for AIO apps. See [`DOCS.md`](DOCS.md) for setup, security and connection URLs.
 
