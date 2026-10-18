@@ -1,0 +1,17 @@
+configuration:
+  database:
+    name: Initial Database Name
+    description: Name created on first launch only.
+  username:
+    name: Initial Database User
+    description: Superuser created on first launch only.
+  password:
+    name: Initial Database Password
+    description: Required on first launch. Changing it later does NOT change the existing
+      database password.
+  max_connections:
+    name: Maximum Connections
+    description: Maximum simultaneous PostgreSQL connections.
+  shared_buffers_mb:
+    name: Shared Buffer Size (MB)
+    description: Memory reserved for PostgreSQL shared buffers.

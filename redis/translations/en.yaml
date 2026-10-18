@@ -1,0 +1,20 @@
+configuration:
+  password:
+    name: Redis Password
+    description: Required authentication secret for client connections.
+  append_only:
+    name: Append-Only Persistence
+    description: Write changes to disk for restart recovery.
+  maxmemory_mb:
+    name: Memory Limit (MB)
+    description: 0 means no Redis application memory cap.
+  maxmemory_policy:
+    name: Cache Eviction Policy
+    description: Choose which keys Redis removes when the memory limit is reached.
+  save_every_seconds:
+    name: Snapshot Interval (seconds)
+    description: How long between periodic RDB snapshot opportunities; 0 disables
+      snapshots.
+  save_after_changes:
+    name: Minimum Changes For Snapshot
+    description: Minimum writes during the interval; 0 disables snapshots.

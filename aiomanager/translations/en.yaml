@@ -1,0 +1,72 @@
+configuration:
+  encryption_key:
+    name: Encryption Key
+    description: Optional stable secret for encrypted data; when blank the upstream app generates a persistent
+      key.
+  db_type:
+    name: Database Type
+    description: Use SQLite for a standalone install; PostgreSQL for an external database.
+  database_url:
+    name: PostgreSQL Connection URL
+    description: Required when Database Type is postgres; ignored with SQLite.
+  cors_origins:
+    name: Allowed Browser Origins
+    description: Comma-separated allowed origins, e.g. https://manager.example.com.
+  node_env:
+    name: Application Mode
+    description: Optional runtime mode; production is the normal default.
+  db_ssl_reject_unauthorized:
+    name: Verify Database TLS Certificate
+    description: Verify the PostgreSQL server certificate (recommended when a trusted CA is configured).
+  db_pool_size:
+    name: Database Pool Size
+    description: Number of PostgreSQL connections; ignored with SQLite.
+  db_connection_timeout:
+    name: Database Connection Timeout (ms)
+    description: Time to wait for a PostgreSQL pool connection.
+  db_max_retries:
+    name: Database Startup Retries
+    description: Number of PostgreSQL connection retries during startup.
+  read_only_replica:
+    name: Read-only Replica Mode
+    description: Run as PostgreSQL standby without background writes. Advanced only.
+  ssrf_allow_private:
+    name: Allow Fetching Private URLs
+    description: Allow metadata proxy access to private LAN addresses; only for trusted local setups.
+  trust_proxy:
+    name: Trust Reverse Proxy Headers
+    description: Use real client IP from trusted reverse proxy headers. Ensure your proxy replaces these headers.
+  registrations_closed:
+    name: Close New Registrations
+    description: Prevent new account signups while allowing existing users to sign in.
+  unified_enforcement:
+    name: Unified Enforcement Checks
+    description: Advanced consistency checks across server modules.
+  log_level:
+    name: Logging Detail
+    description: Verbosity of application logs.
+  log_pretty_print:
+    name: Human-readable Logs
+    description: Use pretty output rather than JSON log lines.
+  max_sync_payload_size:
+    name: Maximum Sync Payload Size (bytes)
+    description: Maximum encrypted sync-state payload accepted by the API.
+  proxy_concurrency_limit:
+    name: Proxy Concurrent Request Limit
+    description: Maximum simultaneous outbound proxy/metadata requests.
+  image_proxy_timeout_ms:
+    name: Image Proxy Timeout (ms)
+    description: Maximum time for poster and image proxy requests.
+  image_cache_ttl_ms:
+    name: Image Cache Lifetime (ms)
+    description: How long shared in-memory poster cache entries remain valid.
+  activity_engine_enabled:
+    name: Enable Activity Engine
+    description: Enable background activity polling; resource-intensive on shared instances.
+  activity_scan_interval_ms:
+    name: Activity Scan Interval (ms)
+    description: Time between background activity scans.
+  environment_overrides_json:
+    name: 'Advanced: Additional Environment Variables (JSON)'
+    description: Last resort for upstream variables not listed above. Supply a JSON object, e.g. {"NEW_OPTION":"value"}.
+      Leave {} normally; only add keys you trust.

@@ -15,67 +15,138 @@ AIOStreams runs as a managed Home Assistant app in this repository.
 5. Start the app.
 6. Open the web UI from the **Info** tab or browse to `http://HOME_ASSISTANT_IP:3000/stremio/configure`.
 
-## Configuration fields
+## Configuration options
 
-### `base_url`
-Public or local URL used by AIOStreams to build its links.
+Labels and help text also appear in the Home Assistant Configuration tab. Optional fields left unset use the upstream defaults.
 
-Example:
+### Public Base URL
 
-```text
-http://10.0.0.16:3000
-```
+`base_url` → `BASE_URL`
 
-If you use a reverse proxy, set it to the final external URL.
+Full URL used in manifest and configuration links. Example: https://streams.example.com.
 
-### `secret_key`
-Required stable secret used by AIOStreams for encryption and secure state.
+### Encryption Secret Key
 
-**Important:** do not change this key on an existing installation unless you are prepared to reconfigure the app.
+`secret_key` → `SECRET_KEY`
 
-### `aiostreams_auth`
-Optional basic authentication credential configuration for the upstream container.
+Required 64-character hexadecimal key. Keep the same key when restoring or migrating.
 
-### `aiostreams_auth_permissions`
-Optional permissions string passed through to the upstream app.
+### Operator Login Credentials
 
-### `environment_overrides_json`
-Advanced passthrough for additional upstream environment variables.
+`aiostreams_auth` → `AIOSTREAMS_AUTH`
 
-Example:
+Comma-separated username:password pairs for dashboard/operator access.
 
-```json
-{
-  "LOG_LEVEL": "debug",
-  "LOG_FORMAT": "json"
-}
-```
+### Operator Permissions
 
-Only add keys you intentionally want to override.
+`aiostreams_auth_permissions` → `AIOSTREAMS_AUTH_PERMISSIONS`
 
-## Storage and backups
+Per-user permissions, e.g. alice=admin,bob=proxy|service|createConfig.
 
-- Home Assistant maps private app data to `/app/data`
-- Home Assistant options are read from `/app/data/options.json`
-- Home Assistant backups are configured as **cold** backups
+### Database Connection URL
 
-## Migration from an existing installation
+`database_uri` → `DATABASE_URI`
 
-When migrating from `local_aiostreams` or another Docker deployment:
+Optional SQLite or PostgreSQL connection. Leave blank to use the persistent SQLite default.
 
-1. Stop the old instance.
-2. Keep the **same `secret_key`**.
-3. Copy the upstream app data into the new persistent data location.
-4. Start the new Home Assistant app and verify your configuration.
+### Database Connection Pool Size
 
-## Troubleshooting
+`database_pool_size` → `DATABASE_POOL_SIZE`
 
-- If the app starts but the UI is not reachable, verify the host port mapping.
-- If existing data cannot be read, confirm you kept the same `secret_key`.
-- If you are using advanced variables, check that your JSON is valid.
+Maximum PostgreSQL connections; not needed for SQLite.
 
-## Upstream documentation
+### Redis Connection URL
 
-See the upstream project for full application-level documentation:
+`redis_uri` → `REDIS_URI`
 
-<https://docs.aiostreams.viren070.me/>
+Optional shared-cache Redis URI; leave blank for a single instance.
+
+### Redis Connection Timeout (ms)
+
+`redis_timeout` → `REDIS_TIMEOUT`
+
+Maximum time to wait for a Redis connection.
+
+### Settings Refresh Interval (seconds)
+
+`settings_refresh_interval` → `SETTINGS_REFRESH_INTERVAL`
+
+How often to refresh changes made on another instance. Usually unnecessary to change for one instance.
+
+### Internal Service URL
+
+`internal_url` → `INTERNAL_URL`
+
+Override internal URL used by built-in add-ons; the default normally works.
+
+### Disk Cache Directory
+
+`disk_cache_dir` → `DISK_CACHE_DIR`
+
+Override cache location. Use a persistent or deliberately disposable location.
+
+### Log Memory Limit (bytes)
+
+`log_buffer_max_bytes` → `LOG_BUFFER_MAX_BYTES`
+
+Maximum memory used for recent dashboard log lines.
+
+### Maximum Saved Log Entries
+
+`log_buffer_max_entries` → `LOG_BUFFER_MAX_ENTRIES`
+
+Maximum number of recent dashboard log lines kept in memory.
+
+### Application Mode
+
+`node_env` → `NODE_ENV`
+
+Normally leave blank (production). Development/test are for troubleshooting.
+
+### Allow Dashboard Process Controls
+
+`system_lifecycle_enabled` → `SYSTEM_LIFECYCLE_ENABLED`
+
+Allow dashboard System page to restart or stop the AIOStreams process.
+
+### Logging Detail
+
+`log_level` → `LOG_LEVEL`
+
+Optional override. Configuring runtime options here makes them read-only in AIOStreams dashboard.
+
+### Log Output Format
+
+`log_format` → `LOG_FORMAT`
+
+Optional runtime override. JSON is suitable for log collectors.
+
+### Require Login for Configuration
+
+`auth_required` → `AIOSTREAMS_AUTH_REQUIRED`
+
+Lock the configure page behind operator login. Overrides the dashboard setting.
+
+### Allow Private Network URLs
+
+`allow_private_urls` → `ALLOW_PRIVATE_URLS`
+
+Permit requests to LAN and loopback addresses. Disable for public multi-user deployments; locks dashboard setting.
+
+### Default Provider Timeout (ms)
+
+`default_timeout` → `DEFAULT_TIMEOUT`
+
+Fallback timeout for fetching streams from providers; locks dashboard setting.
+
+### Advanced: Additional Environment Variables (JSON)
+
+Only use `environment_overrides_json` for variables not listed above. Enter a valid JSON object such as `{"EXAMPLE_VARIABLE":"value"}`. Keep `{}` otherwise. Do not put keys or passwords in Git.
+
+## Backups and upgrades
+
+Use the built-in Home Assistant backup functionality before upgrades; database settings and encryption keys must be preserved on migration.
+
+## Upstream reference
+
+<https://docs.aiostreams.viren070.me/configuration/environment-variables/>

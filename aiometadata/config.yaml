@@ -20,11 +20,6 @@ map:
   read_only: false
   path: /app/addon/data
 options:
-  host_name: ''
-  tmdb_api_key: ''
-  tvdb_api_key: ''
-  fanart_api_key: ''
-  redis_url: ''
   database_uri: sqlite://addon/data/db.sqlite
   environment_overrides_json: '{}'
 schema:
@@ -34,4 +29,23 @@ schema:
   fanart_api_key: password?
   redis_url: str?
   database_uri: str
-  environment_overrides_json: str
+  admin_key: password?
+  image_proxy_signing_secret: password?
+  built_in_tmdb_api_key: password?
+  built_in_tvdb_api_key: password?
+  built_in_fanart_api_key: password?
+  built_in_rpdb_api_key: password?
+  built_in_mdblist_api_key: password?
+  built_in_gemini_api_key: password?
+  rpdb_api_key: password?
+  log_level: list(silent|info|debug)?
+  log_buffer_size: int?
+  node_env: list(production|development)?
+  run_migrations: bool?
+  database_read_uri: str?
+  cache_warmup_on_startup: bool?
+  max_catalogs: int?
+  sfw_mode: bool?
+  enable_ai_search: bool?
+  enable_streaming_catalogs: bool?
+  environment_overrides_json: str?

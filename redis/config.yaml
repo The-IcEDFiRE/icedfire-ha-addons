@@ -1,0 +1,36 @@
+name: IcEDFiRE Redis
+version: 0.0.0
+slug: redis
+description: Private Redis cache for AIO apps
+url: https://github.com/The-IcEDFiRE/icedfire-ha-addons/tree/main/redis
+arch:
+- amd64
+- aarch64
+startup: system
+boot: auto
+init: false
+backup: cold
+timeout: 120
+image: ghcr.io/the-icedfire/ha-redis
+ports:
+  6379/tcp: null
+ports_description:
+  6379/tcp: Optional host exposure; leave disabled for internal app access
+map:
+- type: data
+  read_only: false
+  path: /data
+options:
+  password: ''
+  append_only: true
+  maxmemory_mb: 0
+  maxmemory_policy: noeviction
+  save_every_seconds: 900
+  save_after_changes: 1
+schema:
+  password: password
+  append_only: bool
+  maxmemory_mb: int(0,)
+  maxmemory_policy: list(noeviction|allkeys-lru|allkeys-lfu|volatile-lru|volatile-ttl)
+  save_every_seconds: int(0,)
+  save_after_changes: int(0,)

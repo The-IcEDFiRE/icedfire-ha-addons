@@ -2,11 +2,13 @@
 
 Community-maintained **Home Assistant apps** for the AIO ecosystem.
 
-This repository currently provides:
+This repository currently provides five independently installable apps:
 
 - **AIOStreams** — streaming add-on wrapper for Home Assistant
 - **AIOMetadata** — metadata add-on wrapper for Home Assistant
 - **AIOManager** — management add-on wrapper for Home Assistant
+- **IcEDFiRE Redis** — optional private Redis service
+- **IcEDFiRE PostgreSQL** — optional private PostgreSQL 17 database
 
 These are **community wrappers** around upstream containers. They are not official Home Assistant packages from the upstream project authors.
 
@@ -37,6 +39,8 @@ These are **community wrappers** around upstream containers. They are not offici
 | AIOStreams | `3000` | `ghcr.io/viren070/aiostreams:latest` |
 | AIOMetadata | `3232` | `ghcr.io/cedya77/aiometadata:latest` |
 | AIOManager | `1610` | `ghcr.io/sonicx161/aiomanager:latest` |
+| IcEDFiRE Redis | Internal `6379` (not exposed by default) | `redis:7.4-bookworm` |
+| IcEDFiRE PostgreSQL | Internal `5432` (not exposed by default) | `postgres:17-bookworm` |
 
 ## Automatic updates
 
@@ -65,3 +69,11 @@ You can then either update manually from Home Assistant or enable automatic upda
 
 For issues with the Home Assistant wrappers, use this repository.
 For application-specific issues, also check the upstream project documentation and issue tracker.
+
+## Optional infrastructure services
+
+Redis and PostgreSQL are separate Home Assistant apps, **not automatically installed as dependencies**. Install them only if one of your AIO apps needs them. Both run on the HAOS internal app network, require authentication, use cold app backups and have their host ports **disabled by default**.
+
+The internal hostname is specific to the app installation; find it in the installed app information. Home Assistant built-in service discovery does **not** register Redis or PostgreSQL as supported service types. See [Redis documentation](redis/DOCS.md) and [PostgreSQL documentation](postgresql/DOCS.md) for complete connection examples.
+
+**Important:** PostgreSQL 17 is deliberately major-version pinned. Backups and upgrades require more caution than ordinary stateless applications. Redis and PostgreSQL builds have not yet been tested on HAOS; validate before enabling automatic upgrades.

@@ -1,0 +1,67 @@
+configuration:
+  base_url:
+    name: Public Base URL
+    description: 'Full URL used in manifest and configuration links. Example: https://streams.example.com.'
+  secret_key:
+    name: Encryption Secret Key
+    description: Required 64-character hexadecimal key. Keep the same key when restoring or migrating.
+  aiostreams_auth:
+    name: Operator Login Credentials
+    description: Comma-separated username:password pairs for dashboard/operator access.
+  aiostreams_auth_permissions:
+    name: Operator Permissions
+    description: Per-user permissions, e.g. alice=admin,bob=proxy|service|createConfig.
+  database_uri:
+    name: Database Connection URL
+    description: Optional SQLite or PostgreSQL connection. Leave blank to use the persistent SQLite default.
+  database_pool_size:
+    name: Database Connection Pool Size
+    description: Maximum PostgreSQL connections; not needed for SQLite.
+  redis_uri:
+    name: Redis Connection URL
+    description: Optional shared-cache Redis URI; leave blank for a single instance.
+  redis_timeout:
+    name: Redis Connection Timeout (ms)
+    description: Maximum time to wait for a Redis connection.
+  settings_refresh_interval:
+    name: Settings Refresh Interval (seconds)
+    description: How often to refresh changes made on another instance. Usually unnecessary to change for one
+      instance.
+  internal_url:
+    name: Internal Service URL
+    description: Override internal URL used by built-in add-ons; the default normally works.
+  disk_cache_dir:
+    name: Disk Cache Directory
+    description: Override cache location. Use a persistent or deliberately disposable location.
+  log_buffer_max_bytes:
+    name: Log Memory Limit (bytes)
+    description: Maximum memory used for recent dashboard log lines.
+  log_buffer_max_entries:
+    name: Maximum Saved Log Entries
+    description: Maximum number of recent dashboard log lines kept in memory.
+  node_env:
+    name: Application Mode
+    description: Normally leave blank (production). Development/test are for troubleshooting.
+  system_lifecycle_enabled:
+    name: Allow Dashboard Process Controls
+    description: Allow dashboard System page to restart or stop the AIOStreams process.
+  log_level:
+    name: Logging Detail
+    description: Optional override. Configuring runtime options here makes them read-only in AIOStreams dashboard.
+  log_format:
+    name: Log Output Format
+    description: Optional runtime override. JSON is suitable for log collectors.
+  auth_required:
+    name: Require Login for Configuration
+    description: Lock the configure page behind operator login. Overrides the dashboard setting.
+  allow_private_urls:
+    name: Allow Private Network URLs
+    description: Permit requests to LAN and loopback addresses. Disable for public multi-user deployments;
+      locks dashboard setting.
+  default_timeout:
+    name: Default Provider Timeout (ms)
+    description: Fallback timeout for fetching streams from providers; locks dashboard setting.
+  environment_overrides_json:
+    name: 'Advanced: Additional Environment Variables (JSON)'
+    description: Last resort for upstream variables not listed above. Supply a JSON object, e.g. {"NEW_OPTION":"value"}.
+      Leave {} normally; only add keys you trust.

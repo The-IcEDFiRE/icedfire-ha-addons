@@ -1,0 +1,34 @@
+name: IcEDFiRE PostgreSQL
+version: 0.0.0
+slug: postgresql
+description: Private PostgreSQL database for AIO apps
+url: https://github.com/The-IcEDFiRE/icedfire-ha-addons/tree/main/postgresql
+arch:
+- amd64
+- aarch64
+startup: system
+boot: auto
+init: false
+backup: cold
+timeout: 120
+image: ghcr.io/the-icedfire/ha-postgresql
+ports:
+  5432/tcp: null
+ports_description:
+  5432/tcp: Optional host exposure; leave disabled for internal app access
+map:
+- type: data
+  read_only: false
+  path: /data
+options:
+  database: aio
+  username: aio
+  password: ''
+  max_connections: 100
+  shared_buffers_mb: 128
+schema:
+  database: str
+  username: str
+  password: password
+  max_connections: int(10,)
+  shared_buffers_mb: int(16,)

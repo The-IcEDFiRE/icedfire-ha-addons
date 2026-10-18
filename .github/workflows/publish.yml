@@ -9,6 +9,8 @@ on:
       - 'aiostreams/**'
       - 'aiometadata/**'
       - 'aiomanager/**'
+      - 'redis/**'
+      - 'postgresql/**'
       - 'scripts/**'
       - '.github/workflows/publish.yml'
 permissions:
@@ -19,6 +21,8 @@ concurrency:
   cancel-in-progress: false
 jobs:
   publish:
+    # Publishing commits a version bump; do not rebuild again on that bot commit.
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,7 +43,7 @@ jobs:
           RUN_NUMBER: ${{ github.run_number }}
         run: |
           set -euo pipefail
-          for app in aiostreams aiometadata aiomanager; do
+          for app in aiostreams aiometadata aiomanager redis postgresql; do
             upstream=$(python3 scripts/app_meta.py "$app" upstream)
             upstream_digest=$(docker buildx imagetools inspect "$upstream" --format '{{.Manifest.Digest}}')
             previous=$(cat "$app/upstream-digest.txt")
@@ -63,7 +67,7 @@ jobs:
           if [[ -n "$(git status --porcelain)" ]]; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-            git add aiostreams/config.yaml aiometadata/config.yaml aiomanager/config.yaml */upstream-digest.txt
+            git add */config.yaml */upstream-digest.txt
             git commit -m "chore: publish updated Home Assistant apps"
             git push
           fi

@@ -20,14 +20,29 @@ map:
   read_only: false
   path: /app/data
 options:
-  encryption_key: ''
   db_type: sqlite
-  database_url: ''
-  cors_origins: ''
   environment_overrides_json: '{}'
 schema:
   encryption_key: password?
   db_type: list(sqlite|postgres)
   database_url: password?
   cors_origins: str?
-  environment_overrides_json: str
+  node_env: str?
+  db_ssl_reject_unauthorized: bool?
+  db_pool_size: int?
+  db_connection_timeout: int?
+  db_max_retries: int?
+  read_only_replica: bool?
+  ssrf_allow_private: bool?
+  trust_proxy: bool?
+  registrations_closed: bool?
+  unified_enforcement: bool?
+  log_level: list(fatal|error|warn|info|debug|trace)?
+  log_pretty_print: bool?
+  max_sync_payload_size: int?
+  proxy_concurrency_limit: int?
+  image_proxy_timeout_ms: int?
+  image_cache_ttl_ms: int?
+  activity_engine_enabled: bool?
+  activity_scan_interval_ms: int?
+  environment_overrides_json: str?

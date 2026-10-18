@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys, pathlib, yaml
 app, action, *extra = sys.argv[1:]
-if app not in ('aiostreams','aiometadata','aiomanager'): raise SystemExit('unknown app')
+if app not in ('aiostreams','aiometadata','aiomanager','redis','postgresql'): raise SystemExit('unknown app')
 path = pathlib.Path(app) / 'config.yaml'
 config = yaml.safe_load(path.read_text())
 if action == 'version': print(config['version'])

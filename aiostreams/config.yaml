@@ -22,12 +22,26 @@ map:
 options:
   base_url: ''
   secret_key: ''
-  aiostreams_auth: ''
-  aiostreams_auth_permissions: ''
   environment_overrides_json: '{}'
 schema:
   base_url: str
   secret_key: password
   aiostreams_auth: password?
   aiostreams_auth_permissions: str?
-  environment_overrides_json: str
+  database_uri: str?
+  database_pool_size: int?
+  redis_uri: str?
+  redis_timeout: int?
+  settings_refresh_interval: int?
+  internal_url: str?
+  disk_cache_dir: str?
+  log_buffer_max_bytes: int?
+  log_buffer_max_entries: int?
+  node_env: list(production|development|test)?
+  system_lifecycle_enabled: bool?
+  log_level: list(fatal|error|warn|info|debug|trace)?
+  log_format: list(json|pretty)?
+  auth_required: bool?
+  allow_private_urls: bool?
+  default_timeout: int?
+  environment_overrides_json: str?

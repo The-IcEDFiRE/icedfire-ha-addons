@@ -4,7 +4,23 @@
     "base_url": "BASE_URL",
     "secret_key": "SECRET_KEY",
     "aiostreams_auth": "AIOSTREAMS_AUTH",
-    "aiostreams_auth_permissions": "AIOSTREAMS_AUTH_PERMISSIONS"
+    "aiostreams_auth_permissions": "AIOSTREAMS_AUTH_PERMISSIONS",
+    "database_uri": "DATABASE_URI",
+    "database_pool_size": "DATABASE_POOL_SIZE",
+    "redis_uri": "REDIS_URI",
+    "redis_timeout": "REDIS_TIMEOUT",
+    "settings_refresh_interval": "SETTINGS_REFRESH_INTERVAL",
+    "internal_url": "INTERNAL_URL",
+    "disk_cache_dir": "DISK_CACHE_DIR",
+    "log_buffer_max_bytes": "LOG_BUFFER_MAX_BYTES",
+    "log_buffer_max_entries": "LOG_BUFFER_MAX_ENTRIES",
+    "node_env": "NODE_ENV",
+    "system_lifecycle_enabled": "SYSTEM_LIFECYCLE_ENABLED",
+    "log_level": "LOG_LEVEL",
+    "log_format": "LOG_FORMAT",
+    "auth_required": "AIOSTREAMS_AUTH_REQUIRED",
+    "allow_private_urls": "ALLOW_PRIVATE_URLS",
+    "default_timeout": "DEFAULT_TIMEOUT"
   },
   "required": [
     "secret_key"

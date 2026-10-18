@@ -1,0 +1,80 @@
+configuration:
+  host_name:
+    name: Public Add-on URL
+    description: Publicly accessible base URL used in generated manifest and resource links.
+  tmdb_api_key:
+    name: TMDB API Key (Public)
+    description: Exposed to visitors by upstream configure API. Prefer Built-in TMDB Key for shared deployments.
+  tvdb_api_key:
+    name: TVDB API Key (Public)
+    description: May be exposed to visitors. Prefer Built-in TVDB Key for shared deployments.
+  fanart_api_key:
+    name: Fanart.tv API Key (Public)
+    description: May be exposed to visitors. Prefer Built-in Fanart Key for shared deployments.
+  redis_url:
+    name: Redis Connection URL
+    description: Optional connection string to an external Redis instance.
+  database_uri:
+    name: Database Connection URL
+    description: SQLite or PostgreSQL connection URI. The default stores SQLite in managed app storage
+  admin_key:
+    name: Administrator API Key
+    description: Protects administrative API endpoints. Generate a long random secret.
+  image_proxy_signing_secret:
+    name: Artwork Signing Secret
+    description: Signs poster and artwork proxy links. Changing it invalidates existing signed image URLs.
+  built_in_tmdb_api_key:
+    name: Private Built-in TMDB Key
+    description: Server-side default for users who do not provide their own TMDB key; not exposed to browsers.
+  built_in_tvdb_api_key:
+    name: Private Built-in TVDB Key
+    description: Server-side fallback for TVDB; preferred on shared instances.
+  built_in_fanart_api_key:
+    name: Private Built-in Fanart Key
+    description: Server-side fallback for artwork API requests.
+  built_in_rpdb_api_key:
+    name: Private Built-in RPDB Key
+    description: Server-side fallback for Rating Poster Database.
+  built_in_mdblist_api_key:
+    name: Private Built-in MDBList Key
+    description: Fallback billed per use; use cautiously on public instances.
+  built_in_gemini_api_key:
+    name: Private Built-in Gemini Key
+    description: Server-side AI search API key; shared usage may incur costs.
+  rpdb_api_key:
+    name: RPDB API Key (Public)
+    description: Browser-visible default Rating Poster Database API key.
+  log_level:
+    name: Logging Detail
+    description: How much information to write to logs.
+  log_buffer_size:
+    name: Dashboard Log History Limit
+    description: Number of recent log entries kept in memory.
+  node_env:
+    name: Application Mode
+    description: Use production for normal operation.
+  run_migrations:
+    name: Run Database Migrations
+    description: Create/update database tables at startup. Disable only for special read replicas.
+  database_read_uri:
+    name: Read Replica Database URL
+    description: Optional read-only PostgreSQL replica.
+  cache_warmup_on_startup:
+    name: Warm Cache on Startup
+    description: Load frequently requested metadata after startup.
+  max_catalogs:
+    name: Maximum Catalogs per User
+    description: Optional cap on catalog selections, helpful on public instances.
+  sfw_mode:
+    name: Safe-for-Work Mode
+    description: Filter explicit content globally.
+  enable_ai_search:
+    name: Enable AI Search
+    description: Enable Gemini-backed AI search when configured.
+  enable_streaming_catalogs:
+    name: Enable Streaming Catalogs
+    description: Offer streaming service catalog sources.
+  environment_overrides_json:
+    name: 'Advanced: Additional Environment Variables (JSON)'
+    description: Last resort for upstream variables not listed above. Supply a JSON object, e.g. {"NEW_OPTION":"value"}.
+      Leave {} normally; only add keys you trust.
