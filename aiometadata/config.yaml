@@ -1,7 +1,8 @@
 name: AIOMetadata
-version: "2026.10.19.14"
+version: 0.0.0
 slug: aiometadata
-description: AIOMetadata as a managed Home Assistant app
+description: AIOMetadata managed Home Assistant app with guided settings and persistent
+  backups
 url: https://github.com/The-IcEDFiRE/icedfire-ha-addons/tree/main/aiometadata
 arch:
 - amd64
@@ -48,4 +49,60 @@ schema:
   sfw_mode: bool?
   enable_ai_search: bool?
   enable_streaming_catalogs: bool?
+  addon_password: password?
+  disable_metrics: bool?
+  dashboard_metadata_language: str?
+  addon_logo_url: str?
+  response_compression_enabled: bool?
+  catalog_refresh_ahead_enabled: bool?
+  catalog_refresh_ahead_fraction: float?
+  fanart_api_project_key: password?
+  mdblist_api_key: password?
+  gemini_api_key: password?
+  simkl_client_id: str?
+  simkl_client_secret: password?
+  simkl_auth_mode: list(oauth|pin|both)?
+  simkl_redirect_uri: str?
+  simkl_activities_ttl: int?
+  jikan_api_base: str?
+  jikan_enabled: bool?
+  mal_page_size: int?
+  anilist_client_id: str?
+  anilist_client_secret: password?
+  anilist_redirect_uri: str?
+  mal_client_id: str?
+  mal_client_secret: password?
+  mal_redirect_uri: str?
+  trakt_client_id: str?
+  trakt_client_secret: password?
+  trakt_redirect_uri: str?
+  disable_trakt_search: bool?
+  trakt_concurrency: int?
+  meta_concurrency: int?
+  heap_log_interval_min: int?
+  poster_proxy_timeout_ms: int?
+  prefer_smaller_logos_tmdb: bool?
+  prefer_smaller_backdrops_tmdb: bool?
+  prefer_smaller_landscape_tmdb: bool?
+  prefer_smaller_posters_tmdb: bool?
+  enable_builtin_poster_cache: bool?
+  poster_cache_backgrounds: bool?
+  poster_cache_landscape_posters: bool?
+  poster_cache_logos: bool?
+  poster_cache_thumbnails: bool?
+  poster_cache_processed_images: bool?
+  poster_proxy_allow_private: bool?
+  poster_cache_allowed_hosts: str?
+  poster_cache_max_size: str?
+  poster_cache_memory_size: str?
+  poster_cache_ttl_days: float?
+  poster_cache_infer_ttl: bool?
+  poster_cache_dir: str?
+  poster_cache_fetch_concurrency: int?
+  poster_cache_max_object_bytes: str?
+  poster_cache_inactive_days: int?
+  poster_proxy_max_age_days: float?
+  poster_cache_log_requests: bool?
+  meta_cold_store_max_bytes: str?
+  meta_cold_store_compression: bool?
   environment_overrides_json: str?

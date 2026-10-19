@@ -34,3 +34,8 @@ The complete Redis `/data` directory is under the Home Assistant private app sto
 Redis is **not** exposed through Home Assistant's MQTT/MySQL service discovery. Connection details must be entered explicitly in consumer apps. Be cautious with authentication changes: existing clients stop working until updated.
 
 Official Redis documentation: <https://redis.io/docs/latest/>
+
+
+## Redis version compatibility
+
+AIOMetadata 3.5.1 and newer requires Redis 8.0+ for the `HSETEX` command. This repository builds Redis from the `redis:8.2-bookworm` upstream image. Before upgrading existing Redis data from 7.x, take a cold backup and verify the restore plan; do not assume you can downgrade data files to Redis 7.x afterward.

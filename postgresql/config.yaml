@@ -1,5 +1,5 @@
 name: PostgreSQL
-version: "2026.10.19.14"
+version: 0.0.0
 slug: postgresql
 description: Private PostgreSQL database for AIO apps
 url: https://github.com/The-IcEDFiRE/icedfire-ha-addons/tree/main/postgresql

@@ -1,31 +1,37 @@
 configuration:
   host_name:
     name: Public Add-on URL
-    description: Publicly accessible base URL used in generated manifest and resource links.
+    description: Publicly accessible base URL used in generated manifest and resource
+      links.
   tmdb_api_key:
     name: TMDB API Key (Public)
-    description: Exposed to visitors by upstream configure API. Prefer Built-in TMDB Key for shared deployments.
+    description: Exposed to visitors by upstream configure API. Prefer Built-in TMDB
+      Key for shared deployments.
   tvdb_api_key:
     name: TVDB API Key (Public)
     description: May be exposed to visitors. Prefer Built-in TVDB Key for shared deployments.
   fanart_api_key:
     name: Fanart.tv API Key (Public)
-    description: May be exposed to visitors. Prefer Built-in Fanart Key for shared deployments.
+    description: May be exposed to visitors. Prefer Built-in Fanart Key for shared
+      deployments.
   redis_url:
     name: Redis Connection URL
     description: Optional connection string to an external Redis instance.
   database_uri:
     name: Database Connection URL
-    description: SQLite or PostgreSQL connection URI. The default stores SQLite in managed app storage
+    description: SQLite or PostgreSQL connection URI. The default stores SQLite in
+      managed app storage
   admin_key:
     name: Administrator API Key
     description: Protects administrative API endpoints. Generate a long random secret.
   image_proxy_signing_secret:
     name: Artwork Signing Secret
-    description: Signs poster and artwork proxy links. Changing it invalidates existing signed image URLs.
+    description: Signs poster and artwork proxy links. Changing it invalidates existing
+      signed image URLs.
   built_in_tmdb_api_key:
     name: Private Built-in TMDB Key
-    description: Server-side default for users who do not provide their own TMDB key; not exposed to browsers.
+    description: Server-side default for users who do not provide their own TMDB key;
+      not exposed to browsers.
   built_in_tvdb_api_key:
     name: Private Built-in TVDB Key
     description: Server-side fallback for TVDB; preferred on shared instances.
@@ -55,7 +61,8 @@ configuration:
     description: Use production for normal operation.
   run_migrations:
     name: Run Database Migrations
-    description: Create/update database tables at startup. Disable only for special read replicas.
+    description: Create/update database tables at startup. Disable only for special
+      read replicas.
   database_read_uri:
     name: Read Replica Database URL
     description: Optional read-only PostgreSQL replica.
@@ -74,7 +81,183 @@ configuration:
   enable_streaming_catalogs:
     name: Enable Streaming Catalogs
     description: Offer streaming service catalog sources.
+  addon_password:
+    name: Add-on Password
+    description: Optional password for protected addon endpoints. Different from the
+      administrator API key.
+  disable_metrics:
+    name: Disable Metrics
+    description: Disable dashboard telemetry and metrics collection.
+  dashboard_metadata_language:
+    name: Dashboard Metadata Language
+    description: Preferred language code for titles shown in dashboard content, such
+      as en.
+  addon_logo_url:
+    name: Manifest Logo URL
+    description: Override the logo image URL advertised in the addon manifest.
+  response_compression_enabled:
+    name: Enable HTTP Compression
+    description: Compress compatible HTTP responses using gzip or Brotli.
+  catalog_refresh_ahead_enabled:
+    name: Background Catalog Refresh
+    description: Refresh expiring catalog entries before users request them.
+  catalog_refresh_ahead_fraction:
+    name: Catalog Refresh Window
+    description: Fraction of cache lifetime used for background catalog refresh; e.g.
+      0.1.
+  fanart_api_project_key:
+    name: Fanart Project API Key
+    description: Project client key for Fanart.tv image requests.
+  mdblist_api_key:
+    name: MDBList API Key (Public)
+    description: Publicly exposed default MDBList key; prefer a private built-in key
+      for shared instances.
+  gemini_api_key:
+    name: Gemini API Key (Public)
+    description: Publicly exposed Gemini key; use a private built-in key for shared
+      instances.
+  simkl_client_id:
+    name: Simkl Client ID
+    description: OAuth application identifier for Simkl integrations.
+  simkl_client_secret:
+    name: Simkl Client Secret
+    description: Secret for Simkl browser redirect OAuth flow.
+  simkl_auth_mode:
+    name: Simkl Authorization Mode
+    description: Choose OAuth browser login, device PIN authorization, or both.
+  simkl_redirect_uri:
+    name: Simkl Redirect URL
+    description: OAuth callback URL registered with your Simkl application.
+  simkl_activities_ttl:
+    name: Simkl Activity Cache (Seconds)
+    description: How long activity status stays cached; upstream example is 1800 seconds.
+  jikan_api_base:
+    name: Anime API Base URL
+    description: Base URL for the Jikan-compatible anime metadata API.
+  jikan_enabled:
+    name: Enable Anime Metadata API
+    description: Enable MyAnimeList catalogs, search and metadata via the Jikan-compatible
+      provider.
+  mal_page_size:
+    name: Anime Results Per Page
+    description: Maximum number of titles per MyAnimeList catalog page.
+  anilist_client_id:
+    name: AniList Client ID
+    description: OAuth application ID for AniList watch-tracking integration.
+  anilist_client_secret:
+    name: AniList Client Secret
+    description: OAuth application secret for AniList.
+  anilist_redirect_uri:
+    name: AniList Redirect URL
+    description: OAuth redirect URL registered with AniList.
+  mal_client_id:
+    name: MyAnimeList Client ID
+    description: OAuth application identifier for MyAnimeList tracking.
+  mal_client_secret:
+    name: MyAnimeList Client Secret
+    description: OAuth application secret for MyAnimeList.
+  mal_redirect_uri:
+    name: MyAnimeList Redirect URL
+    description: OAuth callback URL registered with MyAnimeList.
+  trakt_client_id:
+    name: Trakt Client ID
+    description: OAuth application identifier for Trakt integration.
+  trakt_client_secret:
+    name: Trakt Client Secret
+    description: OAuth secret for Trakt integration.
+  trakt_redirect_uri:
+    name: Trakt Redirect URL
+    description: OAuth callback URL registered with Trakt.
+  disable_trakt_search:
+    name: Disable Trakt Search
+    description: Disable Trakt as an available search provider.
+  trakt_concurrency:
+    name: Trakt Concurrent Requests
+    description: Maximum simultaneous Trakt requests.
+  meta_concurrency:
+    name: Metadata Fetch Concurrency
+    description: Maximum simultaneous getMeta operations per catalog request.
+  heap_log_interval_min:
+    name: Memory Logging Interval (Minutes)
+    description: Periodically log memory usage; zero or unset disables.
+  poster_proxy_timeout_ms:
+    name: Artwork Download Timeout (ms)
+    description: Timeout for upstream poster and background image fetches.
+  prefer_smaller_logos_tmdb:
+    name: Use Smaller TMDB Logos
+    description: Reduce logo download dimensions and storage.
+  prefer_smaller_backdrops_tmdb:
+    name: Use Smaller TMDB Backdrops
+    description: Prefer smaller TMDB backgrounds to save bandwidth.
+  prefer_smaller_landscape_tmdb:
+    name: Use Smaller TMDB Landscape Art
+    description: Prefer smaller landscape images.
+  prefer_smaller_posters_tmdb:
+    name: Use Smaller TMDB Posters
+    description: Prefer smaller TMDB poster renditions.
+  enable_builtin_poster_cache:
+    name: Enable Built-in Artwork Cache
+    description: Cache artwork on disk using the application data directory.
+  poster_cache_backgrounds:
+    name: Cache Background Images
+    description: Include backgrounds in the built-in disk artwork cache.
+  poster_cache_landscape_posters:
+    name: Cache Landscape Posters
+    description: Include landscape artwork in the built-in disk cache.
+  poster_cache_logos:
+    name: Cache Logos
+    description: Include logos in the built-in disk cache.
+  poster_cache_thumbnails:
+    name: Cache Episode Thumbnails
+    description: Include episode thumbnails; may consume substantial disk space.
+  poster_cache_processed_images:
+    name: Cache Processed Images
+    description: Store generated or transformed artwork in the cache.
+  poster_proxy_allow_private:
+    name: Allow Private Artwork URLs
+    description: Allow signed artwork URLs to access private network addresses. Disable
+      on public multi-user instances.
+  poster_cache_allowed_hosts:
+    name: Private Artwork Host Allowlist
+    description: Comma-separated private hosts permitted for artwork requests.
+  poster_cache_max_size:
+    name: Artwork Cache Disk Limit
+    description: Maximum disk space for artwork cache, such as 10g.
+  poster_cache_memory_size:
+    name: Artwork Cache Memory Limit
+    description: Memory reserved for hot artwork, such as 128m.
+  poster_cache_ttl_days:
+    name: Artwork Cache Lifetime (Days)
+    description: How long cached images remain fresh before revalidation.
+  poster_cache_infer_ttl:
+    name: Use Upstream Artwork Cache Headers
+    description: Respect artwork providers cache-control headers where possible.
+  poster_cache_dir:
+    name: Artwork Cache Directory
+    description: Override disk cache path; keep under the managed data folder for
+      backup.
+  poster_cache_fetch_concurrency:
+    name: Concurrent Artwork Downloads
+    description: Maximum simultaneous image downloads.
+  poster_cache_max_object_bytes:
+    name: Maximum Cached Artwork Size
+    description: Skip caching oversized individual assets, e.g. 20m.
+  poster_cache_inactive_days:
+    name: Remove Unused Art After (Days)
+    description: Evict cached images that have not been requested recently.
+  poster_proxy_max_age_days:
+    name: Client Artwork Cache (Days)
+    description: Maximum browser/player cache age for proxied artwork.
+  poster_cache_log_requests:
+    name: Log Artwork Cache Requests
+    description: Log individual artwork cache requests for diagnostics.
+  meta_cold_store_max_bytes:
+    name: Metadata Disk Store Budget
+    description: Storage budget for the separate metadata SQLite cache, e.g. 2gb.
+  meta_cold_store_compression:
+    name: Compress Metadata Disk Store
+    description: Use LZ4 compression for stored metadata cache entries.
   environment_overrides_json:
     name: 'Advanced: Additional Environment Variables (JSON)'
-    description: Last resort for upstream variables not listed above. Supply a JSON object, e.g. {"NEW_OPTION":"value"}.
-      Leave {} normally; only add keys you trust.
+    description: Last resort for upstream variables not listed above. Supply a JSON
+      object, e.g. {"NEW_OPTION":"value"}. Leave {} normally; only add keys you trust.

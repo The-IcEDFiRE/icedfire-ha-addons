@@ -4,11 +4,7 @@ opts=/data/options.json
 if [ ! -f "$opts" ]; then echo "Missing Home Assistant options: $opts" >&2; exit 1; fi
 password=$(jq -r '.password // ""' "$opts")
 [ -n "$password" ] || { echo 'Configure a Redis password in the Home Assistant app settings first' >&2; exit 1; }
-append=$(jq -r '
-  if .append_only == false then "no"
-  else "yes"
-  end
-' "$opts")
+append=$(jq -r 'if .append_only == false then "no" else "yes" end' "$opts")
 maxmb=$(jq -r '.maxmemory_mb // 0' "$opts")
 policy=$(jq -r '.maxmemory_policy // "noeviction"' "$opts")
 seconds=$(jq -r '.save_every_seconds // 900' "$opts")

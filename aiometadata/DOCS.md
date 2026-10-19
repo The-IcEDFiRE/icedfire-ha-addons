@@ -175,3 +175,351 @@ Use the built-in Home Assistant backup functionality before upgrades; database s
 ## Upstream reference
 
 <https://github.com/cedya77/aiometadata/blob/dev/docs/ENVIRONMENT_VARIABLES.md>
+
+
+## Redis version compatibility
+
+AIOMetadata 3.5.1 and newer requires Redis 8.0+ for the `HSETEX` command. This repository builds Redis from the `redis:8.2-bookworm` upstream image. Before upgrading existing Redis data from 7.x, take a cold backup and verify the restore plan; do not assume you can downgrade data files to Redis 7.x afterward.
+
+## Additional configuration fields
+
+The settings below map directly to upstream environment variables. Leave optional settings blank to use upstream defaults. Boolean options that are unset are not exported.
+
+### Add-on Password
+
+`addon_password` → `ADDON_PASSWORD`
+
+Optional password for protected addon endpoints. Different from the administrator API key.
+
+### Disable Metrics
+
+`disable_metrics` → `DISABLE_METRICS`
+
+Disable dashboard telemetry and metrics collection.
+
+### Dashboard Metadata Language
+
+`dashboard_metadata_language` → `DASHBOARD_METADATA_LANGUAGE`
+
+Preferred language code for titles shown in dashboard content, such as en.
+
+### Manifest Logo URL
+
+`addon_logo_url` → `ADDON_LOGO_URL`
+
+Override the logo image URL advertised in the addon manifest.
+
+### Enable HTTP Compression
+
+`response_compression_enabled` → `RESPONSE_COMPRESSION_ENABLED`
+
+Compress compatible HTTP responses using gzip or Brotli.
+
+### Background Catalog Refresh
+
+`catalog_refresh_ahead_enabled` → `CATALOG_REFRESH_AHEAD_ENABLED`
+
+Refresh expiring catalog entries before users request them.
+
+### Catalog Refresh Window
+
+`catalog_refresh_ahead_fraction` → `CATALOG_REFRESH_AHEAD_FRACTION`
+
+Fraction of cache lifetime used for background catalog refresh; e.g. 0.1.
+
+### Fanart Project API Key
+
+`fanart_api_project_key` → `FANART_API_PROJECT_KEY`
+
+Project client key for Fanart.tv image requests.
+
+### MDBList API Key (Public)
+
+`mdblist_api_key` → `MDBLIST_API_KEY`
+
+Publicly exposed default MDBList key; prefer a private built-in key for shared instances.
+
+### Gemini API Key (Public)
+
+`gemini_api_key` → `GEMINI_API_KEY`
+
+Publicly exposed Gemini key; use a private built-in key for shared instances.
+
+### Simkl Client ID
+
+`simkl_client_id` → `SIMKL_CLIENT_ID`
+
+OAuth application identifier for Simkl integrations.
+
+### Simkl Client Secret
+
+`simkl_client_secret` → `SIMKL_CLIENT_SECRET`
+
+Secret for Simkl browser redirect OAuth flow.
+
+### Simkl Authorization Mode
+
+`simkl_auth_mode` → `SIMKL_AUTH_MODE`
+
+Choose OAuth browser login, device PIN authorization, or both.
+
+### Simkl Redirect URL
+
+`simkl_redirect_uri` → `SIMKL_REDIRECT_URI`
+
+OAuth callback URL registered with your Simkl application.
+
+### Simkl Activity Cache (Seconds)
+
+`simkl_activities_ttl` → `SIMKL_ACTIVITIES_TTL`
+
+How long activity status stays cached; upstream example is 1800 seconds.
+
+### Anime API Base URL
+
+`jikan_api_base` → `JIKAN_API_BASE`
+
+Base URL for the Jikan-compatible anime metadata API.
+
+### Enable Anime Metadata API
+
+`jikan_enabled` → `JIKAN_ENABLED`
+
+Enable MyAnimeList catalogs, search and metadata via the Jikan-compatible provider.
+
+### Anime Results Per Page
+
+`mal_page_size` → `MAL_PAGE_SIZE`
+
+Maximum number of titles per MyAnimeList catalog page.
+
+### AniList Client ID
+
+`anilist_client_id` → `ANILIST_CLIENT_ID`
+
+OAuth application ID for AniList watch-tracking integration.
+
+### AniList Client Secret
+
+`anilist_client_secret` → `ANILIST_CLIENT_SECRET`
+
+OAuth application secret for AniList.
+
+### AniList Redirect URL
+
+`anilist_redirect_uri` → `ANILIST_REDIRECT_URI`
+
+OAuth redirect URL registered with AniList.
+
+### MyAnimeList Client ID
+
+`mal_client_id` → `MAL_CLIENT_ID`
+
+OAuth application identifier for MyAnimeList tracking.
+
+### MyAnimeList Client Secret
+
+`mal_client_secret` → `MAL_CLIENT_SECRET`
+
+OAuth application secret for MyAnimeList.
+
+### MyAnimeList Redirect URL
+
+`mal_redirect_uri` → `MAL_REDIRECT_URI`
+
+OAuth callback URL registered with MyAnimeList.
+
+### Trakt Client ID
+
+`trakt_client_id` → `TRAKT_CLIENT_ID`
+
+OAuth application identifier for Trakt integration.
+
+### Trakt Client Secret
+
+`trakt_client_secret` → `TRAKT_CLIENT_SECRET`
+
+OAuth secret for Trakt integration.
+
+### Trakt Redirect URL
+
+`trakt_redirect_uri` → `TRAKT_REDIRECT_URI`
+
+OAuth callback URL registered with Trakt.
+
+### Disable Trakt Search
+
+`disable_trakt_search` → `DISABLE_TRAKT_SEARCH`
+
+Disable Trakt as an available search provider.
+
+### Trakt Concurrent Requests
+
+`trakt_concurrency` → `TRAKT_CONCURRENCY`
+
+Maximum simultaneous Trakt requests.
+
+### Metadata Fetch Concurrency
+
+`meta_concurrency` → `META_CONCURRENCY`
+
+Maximum simultaneous getMeta operations per catalog request.
+
+### Memory Logging Interval (Minutes)
+
+`heap_log_interval_min` → `HEAP_LOG_INTERVAL_MIN`
+
+Periodically log memory usage; zero or unset disables.
+
+### Artwork Download Timeout (ms)
+
+`poster_proxy_timeout_ms` → `POSTER_PROXY_TIMEOUT_MS`
+
+Timeout for upstream poster and background image fetches.
+
+### Use Smaller TMDB Logos
+
+`prefer_smaller_logos_tmdb` → `PREFER_SMALLER_LOGOS_TMDB`
+
+Reduce logo download dimensions and storage.
+
+### Use Smaller TMDB Backdrops
+
+`prefer_smaller_backdrops_tmdb` → `PREFER_SMALLER_BACKDROPS_TMDB`
+
+Prefer smaller TMDB backgrounds to save bandwidth.
+
+### Use Smaller TMDB Landscape Art
+
+`prefer_smaller_landscape_tmdb` → `PREFER_SMALLER_LANDSCAPE_TMDB`
+
+Prefer smaller landscape images.
+
+### Use Smaller TMDB Posters
+
+`prefer_smaller_posters_tmdb` → `PREFER_SMALLER_POSTERS_TMDB`
+
+Prefer smaller TMDB poster renditions.
+
+### Enable Built-in Artwork Cache
+
+`enable_builtin_poster_cache` → `ENABLE_BUILTIN_POSTER_CACHE`
+
+Cache artwork on disk using the application data directory.
+
+### Cache Background Images
+
+`poster_cache_backgrounds` → `POSTER_CACHE_BACKGROUNDS`
+
+Include backgrounds in the built-in disk artwork cache.
+
+### Cache Landscape Posters
+
+`poster_cache_landscape_posters` → `POSTER_CACHE_LANDSCAPE_POSTERS`
+
+Include landscape artwork in the built-in disk cache.
+
+### Cache Logos
+
+`poster_cache_logos` → `POSTER_CACHE_LOGOS`
+
+Include logos in the built-in disk cache.
+
+### Cache Episode Thumbnails
+
+`poster_cache_thumbnails` → `POSTER_CACHE_THUMBNAILS`
+
+Include episode thumbnails; may consume substantial disk space.
+
+### Cache Processed Images
+
+`poster_cache_processed_images` → `POSTER_CACHE_PROCESSED_IMAGES`
+
+Store generated or transformed artwork in the cache.
+
+### Allow Private Artwork URLs
+
+`poster_proxy_allow_private` → `POSTER_PROXY_ALLOW_PRIVATE`
+
+Allow signed artwork URLs to access private network addresses. Disable on public multi-user instances.
+
+### Private Artwork Host Allowlist
+
+`poster_cache_allowed_hosts` → `POSTER_CACHE_ALLOWED_HOSTS`
+
+Comma-separated private hosts permitted for artwork requests.
+
+### Artwork Cache Disk Limit
+
+`poster_cache_max_size` → `POSTER_CACHE_MAX_SIZE`
+
+Maximum disk space for artwork cache, such as 10g.
+
+### Artwork Cache Memory Limit
+
+`poster_cache_memory_size` → `POSTER_CACHE_MEMORY_SIZE`
+
+Memory reserved for hot artwork, such as 128m.
+
+### Artwork Cache Lifetime (Days)
+
+`poster_cache_ttl_days` → `POSTER_CACHE_TTL_DAYS`
+
+How long cached images remain fresh before revalidation.
+
+### Use Upstream Artwork Cache Headers
+
+`poster_cache_infer_ttl` → `POSTER_CACHE_INFER_TTL`
+
+Respect artwork providers cache-control headers where possible.
+
+### Artwork Cache Directory
+
+`poster_cache_dir` → `POSTER_CACHE_DIR`
+
+Override disk cache path; keep under the managed data folder for backup.
+
+### Concurrent Artwork Downloads
+
+`poster_cache_fetch_concurrency` → `POSTER_CACHE_FETCH_CONCURRENCY`
+
+Maximum simultaneous image downloads.
+
+### Maximum Cached Artwork Size
+
+`poster_cache_max_object_bytes` → `POSTER_CACHE_MAX_OBJECT_BYTES`
+
+Skip caching oversized individual assets, e.g. 20m.
+
+### Remove Unused Art After (Days)
+
+`poster_cache_inactive_days` → `POSTER_CACHE_INACTIVE_DAYS`
+
+Evict cached images that have not been requested recently.
+
+### Client Artwork Cache (Days)
+
+`poster_proxy_max_age_days` → `POSTER_PROXY_MAX_AGE_DAYS`
+
+Maximum browser/player cache age for proxied artwork.
+
+### Log Artwork Cache Requests
+
+`poster_cache_log_requests` → `POSTER_CACHE_LOG_REQUESTS`
+
+Log individual artwork cache requests for diagnostics.
+
+### Metadata Disk Store Budget
+
+`meta_cold_store_max_bytes` → `META_COLD_STORE_MAX_BYTES`
+
+Storage budget for the separate metadata SQLite cache, e.g. 2gb.
+
+### Compress Metadata Disk Store
+
+`meta_cold_store_compression` → `META_COLD_STORE_COMPRESSION`
+
+Use LZ4 compression for stored metadata cache entries.
+
+
+For the latest full upstream variable reference, see [AIOMetadata environment variables](https://github.com/cedya77/aiometadata/blob/dev/docs/ENVIRONMENT_VARIABLES.md).
