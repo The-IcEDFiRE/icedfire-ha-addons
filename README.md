@@ -77,3 +77,7 @@ Redis and PostgreSQL are separate Home Assistant apps, **not automatically insta
 The internal hostname is specific to the app installation; find it in the installed app information. Home Assistant built-in service discovery does **not** register Redis or PostgreSQL as supported service types. See [Redis documentation](redis/DOCS.md) and [PostgreSQL documentation](postgresql/DOCS.md) for complete connection examples.
 
 **Important:** PostgreSQL 17 is deliberately major-version pinned. Backups and upgrades require more caution than ordinary stateless applications. Redis and PostgreSQL builds have not yet been tested on HAOS; validate before enabling automatic upgrades.
+
+## Independent app releases
+
+Changes to one app no longer rebuild all five images. See [Selective updates](SELECTIVE-UPDATES.md) for the update rules and how to force a single-app build.

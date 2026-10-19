@@ -1,8 +1,22 @@
 name: Check upstream images and publish apps
+
 on:
   schedule:
     - cron: '17 */6 * * *'
   workflow_dispatch:
+    inputs:
+      force_app:
+        description: 'Force rebuild one app even if unchanged'
+        type: choice
+        required: true
+        default: none
+        options:
+          - none
+          - aiostreams
+          - aiometadata
+          - aiomanager
+          - redis
+          - postgresql
   push:
     branches: [main]
     paths:
@@ -13,20 +27,23 @@ on:
       - 'postgresql/**'
       - 'scripts/**'
       - '.github/workflows/publish.yml'
+
 permissions:
   contents: write
   packages: write
+
 concurrency:
   group: publish-apps
   cancel-in-progress: false
+
 jobs:
   publish:
-    # Publishing commits a version bump; do not rebuild again on that bot commit.
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           persist-credentials: true
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
@@ -37,23 +54,67 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Install YAML support
         run: python3 -m pip install --user PyYAML
-      - name: Check, build and publish each changed image
+      - name: Detect, build and publish only changed apps
         shell: bash
         env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          FORCE_APP: ${{ inputs.force_app || 'none' }}
           RUN_NUMBER: ${{ github.run_number }}
         run: |
           set -euo pipefail
-          for app in aiostreams aiometadata aiomanager redis postgresql; do
-            upstream=$(python3 scripts/app_meta.py "$app" upstream)
-            upstream_digest=$(docker buildx imagetools inspect "$upstream" --format '{{.Manifest.Digest}}')
-            previous=$(cat "$app/upstream-digest.txt")
-            current_version=$(python3 scripts/app_meta.py "$app" version)
-            # When a wrapper source changes and a user dispatches the workflow, republish it.
-            # On schedule, publish only if upstream digest differs.
-            if [[ "$upstream_digest" == "$previous" && "${{ github.event_name }}" == 'schedule' ]]; then
-              echo "$app unchanged"
+          apps=(aiostreams aiometadata aiomanager redis postgresql)
+          changed_files="$(mktemp)"
+
+          if [[ "$EVENT_NAME" == 'push' ]]; then
+            # The push payload includes the previous commit. Compare the whole push,
+            # not just HEAD^, so multi-commit pushes work correctly.
+            if [[ -n "$BEFORE_SHA" && ! "$BEFORE_SHA" =~ ^0+$ ]] &&
+               git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+              git diff --name-only "$BEFORE_SHA" HEAD > "$changed_files"
+            else
+              # First commit/new branch: consider all app files changed.
+              git ls-files > "$changed_files"
+            fi
+          fi
+
+          for app in "${apps[@]}"; do
+            upstream="$(python3 scripts/app_meta.py "$app" upstream)"
+            upstream_digest="$(docker buildx imagetools inspect "$upstream" --format '{{.Manifest.Digest}}')"
+            previous_digest="$(cat "$app/upstream-digest.txt" 2>/dev/null || true)"
+            digest_changed=false
+            wrapper_changed=false
+            forced=false
+
+            if [[ "$upstream_digest" != "$previous_digest" ]]; then
+              digest_changed=true
+            fi
+
+            if [[ "$EVENT_NAME" == 'push' ]]; then
+              # A wrapper file, translation, DOCS, icon, etc. changed.
+              # Do not count the version and digest files emitted by this workflow.
+              if grep -E "^${app}/" "$changed_files" | \
+                grep -Ev "^${app}/(upstream-digest\\.txt|config\\.yaml)$" >/dev/null; then
+                wrapper_changed=true
+              fi
+              # A user may directly edit config.yaml (including options/schema).
+              # This can be distinguished from automatic version-only commits by
+              # skipping bot commits at the job level; count such human edits.
+              if grep -Fx "${app}/config.yaml" "$changed_files" >/dev/null; then
+                wrapper_changed=true
+              fi
+            fi
+
+            if [[ "$EVENT_NAME" == 'workflow_dispatch' && "$FORCE_APP" == "$app" ]]; then
+              forced=true
+            fi
+
+            if [[ "$digest_changed" != true && "$wrapper_changed" != true && "$forced" != true ]]; then
+              echo "SKIP $app: upstream digest and wrapper unchanged"
               continue
             fi
+
+            echo "BUILD $app: digest_changed=$digest_changed wrapper_changed=$wrapper_changed forced=$forced"
             version="$(date -u +%Y.%m.%d).${RUN_NUMBER}"
             image="ghcr.io/the-icedfire/ha-${app}"
             docker buildx build --pull \
@@ -64,10 +125,13 @@ jobs:
             python3 scripts/app_meta.py "$app" set-version "$version"
             printf '%s\n' "$upstream_digest" > "$app/upstream-digest.txt"
           done
+
           if [[ -n "$(git status --porcelain)" ]]; then
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add */config.yaml */upstream-digest.txt
-            git commit -m "chore: publish updated Home Assistant apps"
-            git push
+            if ! git diff --cached --quiet; then
+              git commit -m "chore: publish changed Home Assistant apps [skip ci]"
+              git push
+            fi
           fi
