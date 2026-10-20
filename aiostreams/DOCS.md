@@ -150,3 +150,9 @@ Use the built-in Home Assistant backup functionality before upgrades; database s
 ## Upstream reference
 
 <https://docs.aiostreams.viren070.me/configuration/environment-variables/>
+
+## Upstream variable completeness
+
+This wrapper supports individually named environment fields. Run the **Review AIOStreams environment variables** GitHub Action to propose newly documented upstream variables as a pull request. Review the changes before merging. Optional runtime environment overrides lock corresponding settings in the AIOStreams dashboard. The advanced JSON setting is only a fallback.
+
+Upstream reference: https://docs.aiostreams.viren070.me/configuration/environment-variables/

@@ -1,0 +1,30 @@
+name: Review AIOStreams environment variables
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * 1'
+permissions:
+  contents: read
+  pull-requests: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml
+      - name: Fetch upstream variable reference and generate Home Assistant options
+        run: python scripts/sync_aiostreams_env.py
+      - uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'chore(aiostreams): sync upstream environment variables'
+          title: 'AIOStreams upstream environment variable sync'
+          body: 'Review all new settings and types before merging. This PR does not change running app versions until the publishing workflow runs.'
+          branch: auto/aiostreams-env-sync
+          add-paths: |
+            aiostreams/config.yaml
+            aiostreams/translations/en.yaml
+            aiostreams/launcher.json

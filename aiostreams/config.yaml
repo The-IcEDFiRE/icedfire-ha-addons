@@ -1,5 +1,5 @@
 name: AIOStreams
-version: "2026.10.19.17"
+version: 0.0.0
 slug: aiostreams
 description: AIOStreams as a managed Home Assistant app
 url: https://github.com/The-IcEDFiRE/icedfire-ha-addons/tree/main/aiostreams
@@ -44,4 +44,21 @@ schema:
   auth_required: bool?
   allow_private_urls: bool?
   default_timeout: int?
+  addon_password: password?
+  config_access_key: password?
+  session_ttl_seconds: int?
+  enable_search_api: bool?
+  enable_nab_api: bool?
+  addon_name: str?
+  addon_id: str?
+  custom_html: str?
+  tmdb_api_key: password?
+  tmdb_access_token: password?
+  tvdb_api_key: password?
+  trakt_client_id: str?
+  log_sensitive_info: bool?
+  aio_oidc_enabled: bool?
+  aio_oidc_issuer: str?
+  aio_oidc_client_id: str?
+  aio_oidc_client_secret: password?
   environment_overrides_json: str?

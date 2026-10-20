@@ -20,7 +20,24 @@
     "log_format": "LOG_FORMAT",
     "auth_required": "AIOSTREAMS_AUTH_REQUIRED",
     "allow_private_urls": "ALLOW_PRIVATE_URLS",
-    "default_timeout": "DEFAULT_TIMEOUT"
+    "default_timeout": "DEFAULT_TIMEOUT",
+    "addon_password": "ADDON_PASSWORD",
+    "config_access_key": "CONFIG_ACCESS_KEY",
+    "session_ttl_seconds": "SESSION_TTL_SECONDS",
+    "enable_search_api": "ENABLE_SEARCH_API",
+    "enable_nab_api": "ENABLE_NAB_API",
+    "addon_name": "ADDON_NAME",
+    "addon_id": "ADDON_ID",
+    "custom_html": "CUSTOM_HTML",
+    "tmdb_api_key": "TMDB_API_KEY",
+    "tmdb_access_token": "TMDB_ACCESS_TOKEN",
+    "tvdb_api_key": "TVDB_API_KEY",
+    "trakt_client_id": "TRAKT_CLIENT_ID",
+    "log_sensitive_info": "LOG_SENSITIVE_INFO",
+    "aio_oidc_enabled": "AIOSTREAMS_OIDC_ENABLED",
+    "aio_oidc_issuer": "AIOSTREAMS_OIDC_ISSUER",
+    "aio_oidc_client_id": "AIOSTREAMS_OIDC_CLIENT_ID",
+    "aio_oidc_client_secret": "AIOSTREAMS_OIDC_CLIENT_SECRET"
   },
   "required": [
     "secret_key"

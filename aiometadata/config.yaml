@@ -1,5 +1,5 @@
 name: AIOMetadata
-version: "2026.10.20.19"
+version: 0.0.0
 slug: aiometadata
 description: AIOMetadata managed Home Assistant app with guided settings and persistent
   backups
