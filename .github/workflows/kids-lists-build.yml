@@ -1,4 +1,5 @@
 name: Build Kids Lists
+
 on:
   push:
     branches: [main]
@@ -6,27 +7,80 @@ on:
       - 'kids_lists/**'
       - '.github/workflows/kids-lists-build.yml'
   workflow_dispatch:
+
 permissions:
-  contents: read
+  contents: write
   packages: write
+
+concurrency:
+  group: kids-lists-release-main
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Determine next version
+        id: version
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Workflow run numbers increase, including on manual dispatch.
+          # Existing 0.1.0 release remains older than any new release.
+          VERSION="0.1.${GITHUB_RUN_NUMBER}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Publishing version ${VERSION}"
+
       - uses: docker/setup-qemu-action@v3
       - uses: docker/setup-buildx-action@v3
-      - uses: docker/login-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      - name: Build and push
+
+      - name: Build and publish image
         uses: docker/build-push-action@v6
         with:
           context: ./kids_lists
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/the-icedfire/ha-kids-lists:0.1.0,ghcr.io/the-icedfire/ha-kids-lists:latest
+          tags: |
+            ghcr.io/the-icedfire/ha-kids-lists:${{ steps.version.outputs.version }}
+            ghcr.io/the-icedfire/ha-kids-lists:latest
           build-args: |
-            BUILD_VERSION=0.1.0
+            BUILD_VERSION=${{ steps.version.outputs.version }}
+
+      - name: Update Home Assistant app version
+        env:
+          NEW_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          python3 - <<'PY'
+          import os, pathlib, re
+          path = pathlib.Path('kids_lists/config.yaml')
+          current = path.read_text()
+          updated, count = re.subn(r'(?m)^version:\s*["\']?[^\n"\']+["\']?\s*$', 'version: "' + os.environ['NEW_VERSION'] + '"', current)
+          if count != 1:
+              raise SystemExit('Expected exactly one version entry in kids_lists/config.yaml')
+          path.write_text(updated)
+          PY
+
+      - name: Commit new app version
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add kids_lists/config.yaml
+          if git diff --cached --quiet; then
+            echo 'No version change.'
+            exit 0
+          fi
+          git commit -m "chore(kids-lists): release ${{ steps.version.outputs.version }} [skip ci]"
+          git push origin HEAD:main
