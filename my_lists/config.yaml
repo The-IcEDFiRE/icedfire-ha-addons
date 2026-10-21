@@ -1,0 +1,28 @@
+name: My Lists (Local)
+slug: my_lists
+version: "0.1.0"
+description: Locally hosted upstream My Lists using persistent Cloudflare-compatible KV and D1 emulation
+url: https://github.com/Br0ck25/My-Lists
+arch:
+  - amd64
+  - aarch64
+startup: services
+boot: auto
+init: false
+backup: cold
+image: ghcr.io/the-icedfire/ha-my-lists
+ports:
+  8787/tcp: 8787
+webui: http://[HOST]:[PORT:8787]/
+map:
+  - type: data
+    read_only: false
+    path: /data
+options:
+  admin_key: ""
+  tmdb_api_key: ""
+  public_url: ""
+schema:
+  admin_key: password
+  tmdb_api_key: password?
+  public_url: str?

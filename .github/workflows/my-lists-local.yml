@@ -1,0 +1,124 @@
+name: My Lists local - upstream check, test and release
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '13 */6 * * *'
+  push:
+    branches: [main]
+    paths:
+      - 'my_lists/**'
+      - '.github/workflows/my-lists-local.yml'
+permissions:
+  contents: write
+  packages: write
+concurrency:
+  group: my-lists-local
+  cancel-in-progress: false
+jobs:
+  build:
+    # Prevent version-bump commits causing another release.
+    if: ${{ !contains(github.event.head_commit.message || '', '[skip my-lists]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Resolve latest upstream commit
+        id: upstream
+        shell: bash
+        run: |
+          set -euo pipefail
+          git ls-remote https://github.com/Br0ck25/My-Lists.git refs/heads/main | awk '{print $1}' > /tmp/latest-sha
+          SHA=$(cat /tmp/latest-sha)
+          test "${#SHA}" -eq 40
+          echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          echo "Stored revision: $(cat my_lists/upstream.sha)"
+      - name: Check whether release is needed
+        id: change
+        shell: bash
+        env:
+          NEW_SHA: ${{ steps.upstream.outputs.sha }}
+          EVENT: ${{ github.event_name }}
+        run: |
+          OLD=$(cat my_lists/upstream.sha)
+          if [[ "$NEW_SHA" != "$OLD" || "$EVENT" != "schedule" ]]; then
+            echo 'needed=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'needed=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Fetch exact upstream revision
+        if: steps.change.outputs.needed == 'true'
+        env:
+          SHA: ${{ steps.upstream.outputs.sha }}
+        run: |
+          set -euo pipefail
+          git clone --quiet --filter=blob:none https://github.com/Br0ck25/My-Lists.git /tmp/mylists-source
+          git -C /tmp/mylists-source checkout --quiet --detach "$SHA"
+          mkdir -p my_lists/upstream
+          cp -a /tmp/mylists-source/. my_lists/upstream/
+          rm -rf my_lists/upstream/.git
+          test -s my_lists/upstream/worker_entry_combined.js
+          test -s my_lists/upstream/schema.sql
+          test -s my_lists/upstream/wrangler.toml
+      - uses: docker/setup-qemu-action@v3
+        if: steps.change.outputs.needed == 'true'
+      - uses: docker/setup-buildx-action@v3
+        if: steps.change.outputs.needed == 'true'
+      - name: Build AMD64 smoke-test image
+        if: steps.change.outputs.needed == 'true'
+        env:
+          SHA: ${{ steps.upstream.outputs.sha }}
+        run: |
+          set -euo pipefail
+          docker build --build-arg UPSTREAM_SHA="$SHA" -t mylists-smoke ./my_lists
+          docker run -d --name mylists-test -p 127.0.0.1:18787:8787 mylists-smoke
+          trap 'docker logs mylists-test || true; docker rm -f mylists-test || true' EXIT
+          for attempt in $(seq 1 45); do
+            if curl --fail --silent --show-error http://127.0.0.1:18787/manifest.json -o /tmp/manifest.json; then break; fi
+            sleep 2
+          done
+          python3 - <<'PY'
+          import json
+          with open('/tmp/manifest.json') as f: manifest=json.load(f)
+          assert isinstance(manifest.get('id'), str) and manifest['id']
+          assert isinstance(manifest.get('catalogs'), list)
+          print('Manifest smoke test OK')
+          PY
+      - name: Prepare version
+        if: steps.change.outputs.needed == 'true'
+        id: version
+        env:
+          SHA: ${{ steps.upstream.outputs.sha }}
+        run: |
+          set -euo pipefail
+          V="0.1.${GITHUB_RUN_NUMBER}"
+          echo "$SHA" > my_lists/upstream.sha
+          sed -i -E "s/^version: .*/version: \"$V\"/" my_lists/config.yaml
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+      - uses: docker/login-action@v3
+        if: steps.change.outputs.needed == 'true'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish multi-platform image
+        if: steps.change.outputs.needed == 'true'
+        uses: docker/build-push-action@v6
+        with:
+          context: ./my_lists
+          push: true
+          platforms: linux/amd64,linux/arm64
+          build-args: |
+            UPSTREAM_SHA=${{ steps.upstream.outputs.sha }}
+          tags: |
+            ghcr.io/the-icedfire/ha-my-lists:${{ steps.version.outputs.version }}
+            ghcr.io/the-icedfire/ha-my-lists:latest
+      - name: Commit tested upstream revision and HA version
+        if: steps.change.outputs.needed == 'true'
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add my_lists/upstream.sha my_lists/config.yaml
+          git commit -m 'chore(my-lists): release ${{ steps.version.outputs.version }} [skip my-lists]'
+          git push
