@@ -1,6 +1,6 @@
 name: My Lists (Local)
 slug: my_lists
-version: "0.1.4"
+version: "0.1.5"
 description: Locally hosted upstream My Lists using persistent Cloudflare-compatible KV and D1 emulation
 url: https://github.com/Br0ck25/My-Lists
 arch:
