@@ -6,8 +6,8 @@ const crypto = require('node:crypto');
 const PORT = Number(process.env.GATEWAY_PORT || 8787);
 const TARGET_PORT = Number(process.env.WORKER_PORT || 8788);
 const KEY = process.env.ADMIN_KEY || '';
-if (KEY.length < 24) {
-  console.error('ADMIN_KEY must be a unique secret of at least 24 characters; refusing to start.');
+if (KEY.length < 12) {
+  console.error('ADMIN_KEY must be a unique secret of at least 12 characters; refusing to start.');
   process.exit(1);
 }
 const cookieTag = crypto.createHmac('sha256', KEY).update('my-lists-owner-session-v1').digest('hex');
