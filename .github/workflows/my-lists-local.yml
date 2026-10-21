@@ -60,6 +60,9 @@ jobs:
           test -s my_lists/upstream/worker_entry_combined.js
           test -s my_lists/upstream/schema.sql
           test -s my_lists/upstream/wrangler.toml
+      - name: Test owner-only access gateway
+        if: steps.change.outputs.needed == 'true'
+        run: node --test my_lists/tests/*.test.js
       - uses: docker/setup-qemu-action@v3
         if: steps.change.outputs.needed == 'true'
       - uses: docker/setup-buildx-action@v3
@@ -71,7 +74,7 @@ jobs:
         run: |
           set -euo pipefail
           docker build --build-arg UPSTREAM_SHA="$SHA" -t mylists-smoke ./my_lists
-          docker run -d --name mylists-test -p 127.0.0.1:18787:8787 mylists-smoke
+          docker run -d --name mylists-test -e ADMIN_KEY=ci-smoke-test-key-long-enough-for-use -p 127.0.0.1:18787:8787 mylists-smoke
           trap 'docker logs mylists-test || true; docker rm -f mylists-test || true' EXIT
           for attempt in $(seq 1 45); do
             if curl --fail --silent --show-error http://127.0.0.1:18787/manifest.json -o /tmp/manifest.json; then break; fi

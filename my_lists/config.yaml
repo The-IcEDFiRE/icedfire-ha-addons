@@ -20,9 +20,11 @@ map:
     path: /data
 options:
   admin_key: ""
+  private_mode: true
   tmdb_api_key: ""
   public_url: ""
 schema:
   admin_key: password
+  private_mode: bool
   tmdb_api_key: password?
   public_url: str?

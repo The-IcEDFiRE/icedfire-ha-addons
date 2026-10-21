@@ -25,4 +25,15 @@ if(fs.existsSync('/data/options.json')){
 }
 fs.writeFileSync('upstream/.dev.vars',Object.entries(env).filter(([,v])=>v).map(([k,v])=>`${k}=${JSON.stringify(v)}`).join('\n')+'\n',{mode:0o600});
 NODE
-exec ./node_modules/.bin/wrangler dev --config upstream/wrangler.toml --ip 0.0.0.0 --port 8787 --persist-to /data --show-interactive-dev-session false
+# Expose only the authenticated gateway. Wrangler stays on loopback.
+if [ -f /data/options.json ]; then
+  ADMIN_KEY=$(node -e 'const o=require("/data/options.json"); process.stdout.write(o.admin_key||"")')
+  export ADMIN_KEY
+fi
+node /srv/my-lists/private_gateway.js &
+GATEWAY_PID=$!
+cleanup() { kill "$GATEWAY_PID" 2>/dev/null || true; }
+trap cleanup EXIT INT TERM
+./node_modules/.bin/wrangler dev --config upstream/wrangler.toml --ip 127.0.0.1 --port 8788 --persist-to /data --show-interactive-dev-session false &
+WORKER_PID=$!
+wait "$WORKER_PID"

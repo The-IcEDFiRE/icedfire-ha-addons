@@ -7,6 +7,7 @@ LABEL org.opencontainers.image.source="https://github.com/Br0ck25/My-Lists" \
 WORKDIR /srv/my-lists
 RUN npm install --no-save --ignore-scripts --no-audit --no-fund "wrangler@${WRANGLER_VERSION}" && npm cache clean --force
 COPY upstream/ /srv/my-lists/upstream/
+COPY private_gateway.js /srv/my-lists/private_gateway.js
 COPY run.sh /usr/local/bin/my-lists-run
 RUN chmod 755 /usr/local/bin/my-lists-run && mkdir -p /data
 EXPOSE 8787
